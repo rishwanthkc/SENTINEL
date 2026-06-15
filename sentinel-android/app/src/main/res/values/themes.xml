@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Dark, no-action-bar launch theme.
+         Window/status/nav backgrounds match the app's deep-ink background
+         so there is no white flash before Compose draws. -->
+    <style name="Theme.Sentinel" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/sentinel_bg</item>
+        <item name="android:statusBarColor">@color/sentinel_bg</item>
+        <item name="android:navigationBarColor">@color/sentinel_bg</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
