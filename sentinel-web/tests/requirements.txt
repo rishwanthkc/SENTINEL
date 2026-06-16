@@ -1,0 +1,19 @@
+# Sentinel Frontend - Python Testing Dependencies
+# This file contains all Python packages required for end-to-end testing
+# Generated from frontend-dependencies.yaml
+# Install with: pip install -r requirements.txt
+
+# Testing Framework
+pytest>=7.0.0
+
+# Selenium WebDriver for Browser Automation
+selenium>=4.15.0
+
+# WebDriver Management (automatic driver downloads)
+webdriver-manager>=4.0.0
+
+# Excel Report Generation
+openpyxl>=3.11.0
+
+# Supporting Libraries for E2E Tests
+# (Already included in selenium and dependencies)
