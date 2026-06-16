@@ -173,7 +173,7 @@ python:
         optional: true
 
     configuration:
-      base_url: "http://localhost:5173"
+      base_url: "http://127.0.0.1:5173"
       headless_mode: true
       implicit_wait: 3
       default_timeout: 5
@@ -221,7 +221,7 @@ build:
 development:
   dev_server:
     port: 5173
-    host: "localhost"
+    host: "127.0.0.1"
     open: true
     
   hot_module_replacement:
@@ -230,13 +230,13 @@ development:
 
   mock_backend:
     port: 8000
-    url: "http://localhost:8000"
+    url: "http://127.0.0.1:8000"
 
   testing:
     test_runner: "pytest"
     e2e_tests:
-      frontend_url: "http://localhost:5173"
-      backend_url: "http://localhost:8000"
+      frontend_url: "http://127.0.0.1:5173"
+      backend_url: "http://127.0.0.1:8000"
       test_file: "tests/test_e2e.py"
 
 # ============================================================================
