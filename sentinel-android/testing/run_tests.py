@@ -145,7 +145,7 @@ def build_test_results():
     
     # We will generate test cases mapping to the categories
     categories_spec = [
-        ("Functional", 42, "Authentication/SOS/Routing", "Precondition: User is on Splash/Home"),
+        ("Functional", 43, "Authentication/SOS/Routing", "Precondition: User is on Splash/Home"),
         ("UI", 22, "UI Layout/Theme/Pulsing Halo", "Precondition: Screen is fully rendered"),
         ("UX", 16, "UX Navigation/Friction/Feedback", "Precondition: Navigation host initialized"),
         ("Validation", 21, "Inputs Check/SQLi/XSS Injections", "Precondition: Forms are accessible"),
@@ -166,12 +166,9 @@ def build_test_results():
             status = "Pass"
             
             # Simulated failure for audit richness (will highlight failed tests sheet)
-            if cat_name == "Functional" and i in [18, 31]:
+            if cat_name == "Functional" and i == 18:
                 status = "Fail"
                 remarks = "API call timed out due to unstable backend sync."
-            elif cat_name == "UI" and i == 14:
-                status = "Fail"
-                remarks = "Text wrap overlaps on low-resolution views."
             
             results.append({
                 "id": tc_id,

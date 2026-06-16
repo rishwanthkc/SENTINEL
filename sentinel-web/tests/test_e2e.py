@@ -756,3 +756,7 @@ class TestSentinelE2E:
         logout_btn.click()
         time.sleep(1)
         assert driver.current_url.endswith("/") or "portal" not in driver.current_url
+
+    def test_111_pages_deployment_check(self, driver_setup):
+        driver = driver_setup
+        assert "SENTINEL" in driver.page_source or "Sentinel" in driver.page_source
