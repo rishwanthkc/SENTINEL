@@ -28,7 +28,7 @@ def wait_for_server(url, max_attempts=30, delay=0.5):
         time.sleep(delay)
     return False
 
-@pytest.fixture(scope="function")  # Changed from class to function for better isolation
+@pytest.fixture(scope="class")
 def driver_setup():
     """Create and configure WebDriver instance"""
     chrome_options = Options()
