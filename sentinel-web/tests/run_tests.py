@@ -71,6 +71,19 @@ def start_vite_server():
         time.sleep(0.5)
     
     print("Warning: Vite dev server did not respond on port 5173 within 15 seconds.")
+    # Check if the process has already terminated
+    exit_code = process.poll()
+    if exit_code is not None:
+        print(f"Error: Vite dev server process exited early with code {exit_code}.")
+        try:
+            # Read stdout/stderr from process since it completed
+            stdout_text, stderr_text = process.communicate(timeout=1.0)
+            if stdout_text:
+                print(f"Vite stdout:\n{stdout_text}")
+            if stderr_text:
+                print(f"Vite stderr:\n{stderr_text}")
+        except Exception as e:
+            print(f"Could not read Vite output: {e}")
     return process
 
 # Pytest Result Collector Plugin
