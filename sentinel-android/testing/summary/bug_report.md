@@ -12,7 +12,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe crash/failure
 * **Expected Result**: Action completes successfully without errors or memory leakage.
 * **Actual Result**: Crash, silent failure, or resource constraint limit exceeded.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_crit_001.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_crit_001.png`
 
 ---
 
@@ -26,7 +26,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe crash/failure
 * **Expected Result**: Action completes successfully without errors or memory leakage.
 * **Actual Result**: Crash, silent failure, or resource constraint limit exceeded.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_crit_002.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_crit_002.png`
 
 ---
 
@@ -40,7 +40,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe crash/failure
 * **Expected Result**: Action completes successfully without errors or memory leakage.
 * **Actual Result**: Crash, silent failure, or resource constraint limit exceeded.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_crit_003.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_crit_003.png`
 
 ---
 
@@ -54,7 +54,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe crash/failure
 * **Expected Result**: Action completes successfully without errors or memory leakage.
 * **Actual Result**: Crash, silent failure, or resource constraint limit exceeded.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_crit_004.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_crit_004.png`
 
 ---
 
@@ -68,7 +68,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe crash/failure
 * **Expected Result**: Action completes successfully without errors or memory leakage.
 * **Actual Result**: Crash, silent failure, or resource constraint limit exceeded.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_crit_005.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_crit_005.png`
 
 ---
 
@@ -82,7 +82,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe crash/failure
 * **Expected Result**: Action completes successfully without errors or memory leakage.
 * **Actual Result**: Crash, silent failure, or resource constraint limit exceeded.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_crit_006.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_crit_006.png`
 
 ---
 
@@ -96,7 +96,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe crash/failure
 * **Expected Result**: Action completes successfully without errors or memory leakage.
 * **Actual Result**: Crash, silent failure, or resource constraint limit exceeded.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_crit_007.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_crit_007.png`
 
 ---
 
@@ -110,7 +110,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe crash/failure
 * **Expected Result**: Action completes successfully without errors or memory leakage.
 * **Actual Result**: Crash, silent failure, or resource constraint limit exceeded.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_crit_008.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_crit_008.png`
 
 ---
 
@@ -124,7 +124,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe crash/failure
 * **Expected Result**: Action completes successfully without errors or memory leakage.
 * **Actual Result**: Crash, silent failure, or resource constraint limit exceeded.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_crit_009.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_crit_009.png`
 
 ---
 
@@ -138,7 +138,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe crash/failure
 * **Expected Result**: Action completes successfully without errors or memory leakage.
 * **Actual Result**: Crash, silent failure, or resource constraint limit exceeded.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_crit_010.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_crit_010.png`
 
 ---
 
@@ -152,7 +152,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe crash/failure
 * **Expected Result**: Action completes successfully without errors or memory leakage.
 * **Actual Result**: Crash, silent failure, or resource constraint limit exceeded.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_crit_011.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_crit_011.png`
 
 ---
 
@@ -166,7 +166,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe crash/failure
 * **Expected Result**: Action completes successfully without errors or memory leakage.
 * **Actual Result**: Crash, silent failure, or resource constraint limit exceeded.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_crit_012.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_crit_012.png`
 
 ---
 
@@ -180,7 +180,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe crash/failure
 * **Expected Result**: Action completes successfully without errors or memory leakage.
 * **Actual Result**: Crash, silent failure, or resource constraint limit exceeded.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_crit_013.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_crit_013.png`
 
 ---
 
@@ -194,7 +194,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe crash/failure
 * **Expected Result**: Action completes successfully without errors or memory leakage.
 * **Actual Result**: Crash, silent failure, or resource constraint limit exceeded.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_crit_014.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_crit_014.png`
 
 ---
 
@@ -208,7 +208,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe crash/failure
 * **Expected Result**: Action completes successfully without errors or memory leakage.
 * **Actual Result**: Crash, silent failure, or resource constraint limit exceeded.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_crit_015.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_crit_015.png`
 
 ---
 
@@ -222,7 +222,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe crash/failure
 * **Expected Result**: Action completes successfully without errors or memory leakage.
 * **Actual Result**: Crash, silent failure, or resource constraint limit exceeded.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_crit_016.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_crit_016.png`
 
 ---
 
@@ -236,7 +236,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe crash/failure
 * **Expected Result**: Action completes successfully without errors or memory leakage.
 * **Actual Result**: Crash, silent failure, or resource constraint limit exceeded.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_crit_017.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_crit_017.png`
 
 ---
 
@@ -250,7 +250,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe crash/failure
 * **Expected Result**: Action completes successfully without errors or memory leakage.
 * **Actual Result**: Crash, silent failure, or resource constraint limit exceeded.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_crit_018.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_crit_018.png`
 
 ---
 
@@ -264,7 +264,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe crash/failure
 * **Expected Result**: Action completes successfully without errors or memory leakage.
 * **Actual Result**: Crash, silent failure, or resource constraint limit exceeded.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_crit_019.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_crit_019.png`
 
 ---
 
@@ -278,7 +278,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe crash/failure
 * **Expected Result**: Action completes successfully without errors or memory leakage.
 * **Actual Result**: Crash, silent failure, or resource constraint limit exceeded.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_crit_020.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_crit_020.png`
 
 ---
 
@@ -292,7 +292,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe performance drop or layout error
 * **Expected Result**: Performance guidelines met and layout aligns with design spec.
 * **Actual Result**: Slow response time, layout misalignment, or high resource draw.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_maj_001.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_maj_001.png`
 
 ---
 
@@ -306,7 +306,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe performance drop or layout error
 * **Expected Result**: Performance guidelines met and layout aligns with design spec.
 * **Actual Result**: Slow response time, layout misalignment, or high resource draw.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_maj_002.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_maj_002.png`
 
 ---
 
@@ -320,7 +320,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe performance drop or layout error
 * **Expected Result**: Performance guidelines met and layout aligns with design spec.
 * **Actual Result**: Slow response time, layout misalignment, or high resource draw.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_maj_003.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_maj_003.png`
 
 ---
 
@@ -334,7 +334,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe performance drop or layout error
 * **Expected Result**: Performance guidelines met and layout aligns with design spec.
 * **Actual Result**: Slow response time, layout misalignment, or high resource draw.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_maj_004.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_maj_004.png`
 
 ---
 
@@ -348,7 +348,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe performance drop or layout error
 * **Expected Result**: Performance guidelines met and layout aligns with design spec.
 * **Actual Result**: Slow response time, layout misalignment, or high resource draw.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_maj_005.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_maj_005.png`
 
 ---
 
@@ -362,7 +362,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe performance drop or layout error
 * **Expected Result**: Performance guidelines met and layout aligns with design spec.
 * **Actual Result**: Slow response time, layout misalignment, or high resource draw.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_maj_006.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_maj_006.png`
 
 ---
 
@@ -376,7 +376,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe performance drop or layout error
 * **Expected Result**: Performance guidelines met and layout aligns with design spec.
 * **Actual Result**: Slow response time, layout misalignment, or high resource draw.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_maj_007.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_maj_007.png`
 
 ---
 
@@ -390,7 +390,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe performance drop or layout error
 * **Expected Result**: Performance guidelines met and layout aligns with design spec.
 * **Actual Result**: Slow response time, layout misalignment, or high resource draw.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_maj_008.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_maj_008.png`
 
 ---
 
@@ -404,7 +404,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe performance drop or layout error
 * **Expected Result**: Performance guidelines met and layout aligns with design spec.
 * **Actual Result**: Slow response time, layout misalignment, or high resource draw.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_maj_009.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_maj_009.png`
 
 ---
 
@@ -418,7 +418,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe performance drop or layout error
 * **Expected Result**: Performance guidelines met and layout aligns with design spec.
 * **Actual Result**: Slow response time, layout misalignment, or high resource draw.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_maj_010.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_maj_010.png`
 
 ---
 
@@ -432,7 +432,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe performance drop or layout error
 * **Expected Result**: Performance guidelines met and layout aligns with design spec.
 * **Actual Result**: Slow response time, layout misalignment, or high resource draw.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_maj_011.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_maj_011.png`
 
 ---
 
@@ -446,7 +446,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe performance drop or layout error
 * **Expected Result**: Performance guidelines met and layout aligns with design spec.
 * **Actual Result**: Slow response time, layout misalignment, or high resource draw.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_maj_012.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_maj_012.png`
 
 ---
 
@@ -460,7 +460,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe performance drop or layout error
 * **Expected Result**: Performance guidelines met and layout aligns with design spec.
 * **Actual Result**: Slow response time, layout misalignment, or high resource draw.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_maj_013.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_maj_013.png`
 
 ---
 
@@ -474,7 +474,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe performance drop or layout error
 * **Expected Result**: Performance guidelines met and layout aligns with design spec.
 * **Actual Result**: Slow response time, layout misalignment, or high resource draw.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_maj_014.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_maj_014.png`
 
 ---
 
@@ -488,7 +488,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe performance drop or layout error
 * **Expected Result**: Performance guidelines met and layout aligns with design spec.
 * **Actual Result**: Slow response time, layout misalignment, or high resource draw.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_maj_015.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_maj_015.png`
 
 ---
 
@@ -502,7 +502,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe performance drop or layout error
 * **Expected Result**: Performance guidelines met and layout aligns with design spec.
 * **Actual Result**: Slow response time, layout misalignment, or high resource draw.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_maj_016.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_maj_016.png`
 
 ---
 
@@ -516,7 +516,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe performance drop or layout error
 * **Expected Result**: Performance guidelines met and layout aligns with design spec.
 * **Actual Result**: Slow response time, layout misalignment, or high resource draw.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_maj_017.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_maj_017.png`
 
 ---
 
@@ -530,7 +530,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe performance drop or layout error
 * **Expected Result**: Performance guidelines met and layout aligns with design spec.
 * **Actual Result**: Slow response time, layout misalignment, or high resource draw.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_maj_018.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_maj_018.png`
 
 ---
 
@@ -544,7 +544,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe performance drop or layout error
 * **Expected Result**: Performance guidelines met and layout aligns with design spec.
 * **Actual Result**: Slow response time, layout misalignment, or high resource draw.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_maj_019.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_maj_019.png`
 
 ---
 
@@ -558,7 +558,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Observe performance drop or layout error
 * **Expected Result**: Performance guidelines met and layout aligns with design spec.
 * **Actual Result**: Slow response time, layout misalignment, or high resource draw.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_maj_020.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_maj_020.png`
 
 ---
 
@@ -572,7 +572,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Notice visual mismatch
 * **Expected Result**: UI elements conform to neon blue visual style guide.
 * **Actual Result**: Slight padding mismatch, font scaling issues, or aesthetic deviations.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_min_001.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_min_001.png`
 
 ---
 
@@ -586,7 +586,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Notice visual mismatch
 * **Expected Result**: UI elements conform to neon blue visual style guide.
 * **Actual Result**: Slight padding mismatch, font scaling issues, or aesthetic deviations.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_min_002.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_min_002.png`
 
 ---
 
@@ -600,7 +600,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Notice visual mismatch
 * **Expected Result**: UI elements conform to neon blue visual style guide.
 * **Actual Result**: Slight padding mismatch, font scaling issues, or aesthetic deviations.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_min_003.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_min_003.png`
 
 ---
 
@@ -614,7 +614,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Notice visual mismatch
 * **Expected Result**: UI elements conform to neon blue visual style guide.
 * **Actual Result**: Slight padding mismatch, font scaling issues, or aesthetic deviations.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_min_004.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_min_004.png`
 
 ---
 
@@ -628,7 +628,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Notice visual mismatch
 * **Expected Result**: UI elements conform to neon blue visual style guide.
 * **Actual Result**: Slight padding mismatch, font scaling issues, or aesthetic deviations.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_min_005.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_min_005.png`
 
 ---
 
@@ -642,7 +642,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Notice visual mismatch
 * **Expected Result**: UI elements conform to neon blue visual style guide.
 * **Actual Result**: Slight padding mismatch, font scaling issues, or aesthetic deviations.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_min_006.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_min_006.png`
 
 ---
 
@@ -656,7 +656,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Notice visual mismatch
 * **Expected Result**: UI elements conform to neon blue visual style guide.
 * **Actual Result**: Slight padding mismatch, font scaling issues, or aesthetic deviations.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_min_007.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_min_007.png`
 
 ---
 
@@ -670,7 +670,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Notice visual mismatch
 * **Expected Result**: UI elements conform to neon blue visual style guide.
 * **Actual Result**: Slight padding mismatch, font scaling issues, or aesthetic deviations.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_min_008.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_min_008.png`
 
 ---
 
@@ -684,7 +684,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Notice visual mismatch
 * **Expected Result**: UI elements conform to neon blue visual style guide.
 * **Actual Result**: Slight padding mismatch, font scaling issues, or aesthetic deviations.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_min_009.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_min_009.png`
 
 ---
 
@@ -698,7 +698,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Notice visual mismatch
 * **Expected Result**: UI elements conform to neon blue visual style guide.
 * **Actual Result**: Slight padding mismatch, font scaling issues, or aesthetic deviations.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_min_010.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_min_010.png`
 
 ---
 
@@ -712,7 +712,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Notice visual mismatch
 * **Expected Result**: UI elements conform to neon blue visual style guide.
 * **Actual Result**: Slight padding mismatch, font scaling issues, or aesthetic deviations.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_min_011.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_min_011.png`
 
 ---
 
@@ -726,7 +726,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Notice visual mismatch
 * **Expected Result**: UI elements conform to neon blue visual style guide.
 * **Actual Result**: Slight padding mismatch, font scaling issues, or aesthetic deviations.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_min_012.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_min_012.png`
 
 ---
 
@@ -740,7 +740,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Notice visual mismatch
 * **Expected Result**: UI elements conform to neon blue visual style guide.
 * **Actual Result**: Slight padding mismatch, font scaling issues, or aesthetic deviations.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_min_013.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_min_013.png`
 
 ---
 
@@ -754,7 +754,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Notice visual mismatch
 * **Expected Result**: UI elements conform to neon blue visual style guide.
 * **Actual Result**: Slight padding mismatch, font scaling issues, or aesthetic deviations.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_min_014.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_min_014.png`
 
 ---
 
@@ -768,7 +768,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Notice visual mismatch
 * **Expected Result**: UI elements conform to neon blue visual style guide.
 * **Actual Result**: Slight padding mismatch, font scaling issues, or aesthetic deviations.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_min_015.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_min_015.png`
 
 ---
 
@@ -782,7 +782,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Notice visual mismatch
 * **Expected Result**: UI elements conform to neon blue visual style guide.
 * **Actual Result**: Slight padding mismatch, font scaling issues, or aesthetic deviations.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_min_016.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_min_016.png`
 
 ---
 
@@ -796,7 +796,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Notice visual mismatch
 * **Expected Result**: UI elements conform to neon blue visual style guide.
 * **Actual Result**: Slight padding mismatch, font scaling issues, or aesthetic deviations.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_min_017.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_min_017.png`
 
 ---
 
@@ -810,7 +810,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Notice visual mismatch
 * **Expected Result**: UI elements conform to neon blue visual style guide.
 * **Actual Result**: Slight padding mismatch, font scaling issues, or aesthetic deviations.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_min_018.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_min_018.png`
 
 ---
 
@@ -824,7 +824,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Notice visual mismatch
 * **Expected Result**: UI elements conform to neon blue visual style guide.
 * **Actual Result**: Slight padding mismatch, font scaling issues, or aesthetic deviations.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_min_019.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_min_019.png`
 
 ---
 
@@ -838,7 +838,7 @@ This document provides detailed replication logs for all identified bugs during 
   4. Notice visual mismatch
 * **Expected Result**: UI elements conform to neon blue visual style guide.
 * **Actual Result**: Slight padding mismatch, font scaling issues, or aesthetic deviations.
-* **Screenshot Reference**: `file:///testing/appium/screenshots/bug_min_020.png`
+* **Screenshot Reference**: `file:///testing/app_testing/screenshots/bug_min_020.png`
 
 ---
 

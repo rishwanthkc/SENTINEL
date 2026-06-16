@@ -3,10 +3,10 @@ import sys
 import time
 import random
 import logging
-from appium.configs import config
-from appium.utils.excel_generator import ExcelReportGenerator
-from appium.utils.pdf_generator import PdfReportGenerator
-from appium.utils.metrics_collector import MetricsCollector
+from app_testing.configs import config
+from app_testing.utils.excel_generator import ExcelReportGenerator
+from app_testing.utils.pdf_generator import PdfReportGenerator
+from app_testing.utils.metrics_collector import MetricsCollector
 
 # Configure logger
 logging.basicConfig(
@@ -106,7 +106,7 @@ def generate_bugs_catalog():
             "severity": "Critical",
             "priority": "High",
             "status": "Resolved", # Mocking resolved state for final readiness verdict
-            "screenshot": f"testing/appium/screenshots/bug_crit_{i:03d}.png"
+            "screenshot": f"testing/app_testing/screenshots/bug_crit_{i:03d}.png"
         })
         
     # Compile Major
@@ -120,7 +120,7 @@ def generate_bugs_catalog():
             "severity": "Major",
             "priority": "Medium",
             "status": "Resolved",
-            "screenshot": f"testing/appium/screenshots/bug_maj_{i:03d}.png"
+            "screenshot": f"testing/app_testing/screenshots/bug_maj_{i:03d}.png"
         })
         
     # Compile Minor
@@ -134,7 +134,7 @@ def generate_bugs_catalog():
             "severity": "Minor",
             "priority": "Low",
             "status": "Resolved",
-            "screenshot": f"testing/appium/screenshots/bug_min_{i:03d}.png"
+            "screenshot": f"testing/app_testing/screenshots/bug_min_{i:03d}.png"
         })
         
     return bugs
@@ -184,7 +184,7 @@ def build_test_results():
                 "status": status,
                 "execution_time": round(random.uniform(0.12, 1.25), 2),
                 "remarks": remarks,
-                "screenshot": f"testing/appium/screenshots/{tc_id.lower()}.png"
+                "screenshot": f"testing/app_testing/screenshots/{tc_id.lower()}.png"
             })
             
     return results

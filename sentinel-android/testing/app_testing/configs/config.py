@@ -37,11 +37,11 @@ EXPLICIT_WAIT_TIMEOUT = 10
 IMPLICIT_WAIT_TIMEOUT = 5
 
 # Local testing paths
-SCREENSHOTS_DIR = os.path.join(BASE_DIR, "appium", "screenshots")
-VIDEOS_DIR = os.path.join(BASE_DIR, "appium", "videos")
-LOGS_DIR = os.path.join(BASE_DIR, "appium", "logs")
-EVIDENCE_DIR = os.path.join(BASE_DIR, "appium", "evidence")
-REPORTS_DIR = os.path.join(BASE_DIR, "appium", "reports")
+SCREENSHOTS_DIR = os.path.join(BASE_DIR, "app_testing", "screenshots")
+VIDEOS_DIR = os.path.join(BASE_DIR, "app_testing", "videos")
+LOGS_DIR = os.path.join(BASE_DIR, "app_testing", "logs")
+EVIDENCE_DIR = os.path.join(BASE_DIR, "app_testing", "evidence")
+REPORTS_DIR = os.path.join(BASE_DIR, "app_testing", "reports")
 EXCEL_REPORTS_DIR = os.path.join(BASE_DIR, "excel-reports")
 SUMMARY_DIR = os.path.join(BASE_DIR, "summary")
 
