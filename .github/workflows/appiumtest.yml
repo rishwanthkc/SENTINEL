@@ -1,0 +1,41 @@
+name: Appium E2E Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Run Appium E2E Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          pip install openpyxl reportlab pytest selenium Appium-Python-Client
+
+      - name: Run Appium Tests
+        run: |
+          cd sentinel-android/testing
+          python run_tests.py
+
+      - name: Upload Appium Test Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: appium-test-report
+          path: |
+            sentinel-android/testing/excel-reports/Sentinel_Appium_Test_Report.xlsx
+            sentinel-android/testing/summary/Sentinel_Final_QA_Report.pdf
+            sentinel-android/testing/summary/bug_report.md
+            sentinel-android/testing/summary/deployment_readiness_report.md

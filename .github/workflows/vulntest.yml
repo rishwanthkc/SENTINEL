@@ -1,0 +1,48 @@
+name: Backend Vulnerability Assessment
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  security-audit:
+    name: Run Vulnerability & Security Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          pip install openpyxl fpdf2 PyJWT requests
+
+      - name: Run Security Artifacts Generator
+        run: |
+          cd sentinel-backend/security-testing/scripts
+          python generate_security_artifacts.py
+
+      - name: Run Security Test Runner (Assessment)
+        run: |
+          cd sentinel-backend/security-testing/scripts
+          python security_test_runner.py
+
+      - name: Upload Security Reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-assessment-reports
+          path: |
+            sentinel-backend/security-testing/reports/Backend_Security_Assessment.xlsx
+            sentinel-backend/security-testing/reports/Backend_Security_Assessment.pdf
+            sentinel-backend/security-testing/reports/FINAL_SECURITY_SUMMARY.md
+            sentinel-backend/security-testing/reports/security_report.json
+            sentinel-backend/security-testing/reports/access_matrix.xlsx
+            sentinel-backend/security-testing/reports/rbac_matrix.xlsx
