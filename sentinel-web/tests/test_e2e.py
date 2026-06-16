@@ -109,7 +109,7 @@ class TestSentinelE2E:
 
     def test_010_register_page_renders(self, driver_setup):
         driver = driver_setup
-        driver.get(f"{BASE_URL}/register")
+        driver.get(f"{BASE_URL}/#/register")
         assert "Create your account" in driver.page_source
 
     def test_011_register_title(self, driver_setup):
@@ -147,10 +147,12 @@ class TestSentinelE2E:
 
     def test_017_register_duplicate_email_error(self, driver_setup):
         driver = driver_setup
-        driver.get(f"{BASE_URL}/register")
+        driver.get(f"{BASE_URL}/#/register")
         name_input = self.wait_for(driver, (By.ID, "name"))
+        name_input.clear()
         name_input.send_keys("Jane Doe")
         email_input = driver.find_element(By.ID, "email")
+        email_input.clear()
         email_input.send_keys("user@sentinel.com") # already in mock DB
         btn = driver.find_element(By.CSS_SELECTOR, "button[type='submit']")
         btn.click()
@@ -159,39 +161,41 @@ class TestSentinelE2E:
 
     def test_018_register_success_flow(self, driver_setup):
         driver = driver_setup
-        driver.get(f"{BASE_URL}/register")
+        driver.get(f"{BASE_URL}/#/register")
         name_input = self.wait_for(driver, (By.ID, "name"))
+        name_input.clear()
         name_input.send_keys("Alice Smith")
         email_input = driver.find_element(By.ID, "email")
+        email_input.clear()
         email_input.send_keys("alice@sentinel.com")
         btn = driver.find_element(By.CSS_SELECTOR, "button[type='submit']")
         btn.click()
-        time.sleep(1)
+        WebDriverWait(driver, 5).until(lambda d: d.current_url.endswith("/portal"))
         assert driver.current_url.endswith("/portal")
 
     def test_019_login_as_admin_redirects_dashboard(self, driver_setup):
         driver = driver_setup
         self.login_as(driver, "admin@sentinel.com")
-        time.sleep(1)
+        WebDriverWait(driver, 5).until(lambda d: d.current_url.endswith("/dashboard"))
         assert driver.current_url.endswith("/dashboard")
 
     def test_020_login_as_user_redirects_portal(self, driver_setup):
         driver = driver_setup
         self.login_as(driver, "user@sentinel.com")
-        time.sleep(1)
+        WebDriverWait(driver, 5).until(lambda d: d.current_url.endswith("/portal"))
         assert driver.current_url.endswith("/portal")
 
     def test_021_route_protection_dashboard_direct(self, driver_setup):
         driver = driver_setup
         driver.get(BASE_URL)
         driver.execute_script("localStorage.clear();")
-        driver.get(f"{BASE_URL}/dashboard")
+        driver.get(f"{BASE_URL}/#/dashboard")
         time.sleep(0.5)
         assert driver.current_url.endswith("/") or "/portal" not in driver.current_url
 
     def test_022_route_protection_portal_direct(self, driver_setup):
         driver = driver_setup
-        driver.get(f"{BASE_URL}/portal")
+        driver.get(f"{BASE_URL}/#/portal")
         time.sleep(0.5)
         assert driver.current_url.endswith("/")
 
@@ -287,7 +291,7 @@ class TestSentinelE2E:
 
     def test_038_portal_contacts_navigation(self, driver_setup):
         driver = driver_setup
-        driver.get(f"{BASE_URL}/portal/contacts")
+        driver.get(f"{BASE_URL}/#/portal/contacts")
         self.wait_for_title(driver, "Trusted contacts")
         header = driver.find_element(By.CSS_SELECTOR, "h1")
         assert "Trusted contacts" in header.text
@@ -383,7 +387,7 @@ class TestSentinelE2E:
 
     def test_053_portal_report_navigation(self, driver_setup):
         driver = driver_setup
-        driver.get(f"{BASE_URL}/portal/report")
+        driver.get(f"{BASE_URL}/#/portal/report")
         self.wait_for_title(driver, "Report an incident")
         header = driver.find_element(By.CSS_SELECTOR, "h1")
         assert "Report an incident" in header.text
@@ -473,7 +477,7 @@ class TestSentinelE2E:
 
     def test_066_portal_route_navigation(self, driver_setup):
         driver = driver_setup
-        driver.get(f"{BASE_URL}/portal/route")
+        driver.get(f"{BASE_URL}/#/portal/route")
         self.wait_for_title(driver, "Safe route planner")
         header = driver.find_element(By.CSS_SELECTOR, "h1")
         assert "Safe route planner" in header.text
@@ -540,7 +544,7 @@ class TestSentinelE2E:
 
     def test_076_portal_profile_navigation(self, driver_setup):
         driver = driver_setup
-        driver.get(f"{BASE_URL}/portal/profile")
+        driver.get(f"{BASE_URL}/#/portal/profile")
         self.wait_for_title(driver, "Profile")
         header = driver.find_element(By.CSS_SELECTOR, "h1")
         assert "Profile" in header.text

@@ -1,6 +1,6 @@
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom"
 
 import "./index.css"
 import "leaflet/dist/leaflet.css"
@@ -20,7 +20,7 @@ import Profile from "./pages/portal/Profile"
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -52,6 +52,6 @@ createRoot(document.getElementById("root")).render(
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   </StrictMode>
 )
