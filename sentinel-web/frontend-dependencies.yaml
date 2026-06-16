@@ -144,7 +144,7 @@ python:
 
     # Excel Reporting (for test reports)
     openpyxl:
-      version: "^3.11.0"
+      version: "^3.1.0"
       description: "Python library to read/write Excel xlsx files"
       homepage: "https://openpyxl.readthedocs.io"
       requirements_file: "tests/requirements.txt"

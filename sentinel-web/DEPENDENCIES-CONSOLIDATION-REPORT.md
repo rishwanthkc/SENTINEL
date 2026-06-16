@@ -45,7 +45,7 @@ All frontend dependencies have been successfully consolidated into a single sour
 pytest>=7.0.0
 selenium>=4.15.0
 webdriver-manager>=4.0.0
-openpyxl>=3.11.0
+openpyxl>=3.1.0
 ```
 
 ### Existing Files (Reference, Not Modified)
@@ -101,7 +101,7 @@ openpyxl>=3.11.0
 | `pytest` | >=7.0.0 | Test framework |
 | `selenium` | >=4.15.0 | Browser automation |
 | `webdriver-manager` | >=4.0.0 | Automatic WebDriver management |
-| `openpyxl` | >=3.11.0 | Excel report generation |
+| `openpyxl` | >=3.1.0 | Excel report generation |
 
 ### Selenium WebDriver Configuration
 
