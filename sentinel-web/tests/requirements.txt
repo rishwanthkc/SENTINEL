@@ -5,6 +5,7 @@
 
 # Testing Framework
 pytest>=7.0.0
+pytest-retry>=1.6.1
 
 # Selenium WebDriver for Browser Automation
 selenium>=4.15.0
