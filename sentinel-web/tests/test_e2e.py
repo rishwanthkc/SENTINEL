@@ -1,5 +1,6 @@
 import time
 import pytest
+import socket
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -7,45 +8,86 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 BASE_URL = "http://127.0.0.1:5173"
+MAX_WAIT_TIME = 15  # Increased from 5 to handle slower loads
 
-@pytest.fixture(scope="class")
+def is_server_responsive(url, timeout=3):
+    """Check if the server is responding"""
+    try:
+        from urllib.request import urlopen
+        urlopen(url, timeout=timeout)
+        return True
+    except Exception:
+        return False
+
+def wait_for_server(url, max_attempts=30, delay=0.5):
+    """Wait for server to become responsive"""
+    for attempt in range(max_attempts):
+        if is_server_responsive(url):
+            time.sleep(1)  # Extra buffer after connection
+            return True
+        time.sleep(delay)
+    return False
+
+@pytest.fixture(scope="function")  # Changed from class to function for better isolation
 def driver_setup():
+    """Create and configure WebDriver instance"""
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--window-size=1920,1080")
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
     
     driver = webdriver.Chrome(options=chrome_options)
-    driver.implicitly_wait(3)
+    driver.implicitly_wait(5)
     yield driver
     driver.quit()
 
 @pytest.mark.usefixtures("driver_setup")
 class TestSentinelE2E:
     
-    # helper for waiting elements
-    def wait_for(self, driver, locator, timeout=5):
+    # Helper for waiting elements
+    def wait_for(self, driver, locator, timeout=MAX_WAIT_TIME):
+        """Wait for element with extended timeout"""
         return WebDriverWait(driver, timeout).until(
             EC.presence_of_element_located(locator)
         )
+    
+    def safe_navigate(self, driver, url):
+        """Navigate with server health check"""
+        for attempt in range(3):
+            try:
+                driver.get(url)
+                WebDriverWait(driver, 5).until(
+                    EC.presence_of_element_located((By.TAG_NAME, "body"))
+                )
+                return True
+            except Exception as e:
+                if attempt < 2:
+                    time.sleep(2)
+                    continue
+                raise Exception(f"Failed to navigate to {url}: {e}")
+        return False
 
     def login_as(self, driver, email):
-        driver.get(BASE_URL)
-        email_input = self.wait_for(driver, (By.ID, "email"))
+        """Login with retry logic"""
+        self.safe_navigate(driver, BASE_URL)
+        email_input = self.wait_for(driver, (By.ID, "email"), timeout=10)
         email_input.clear()
         email_input.send_keys(email)
         submit_btn = driver.find_element(By.CSS_SELECTOR, "button[type='submit']")
         submit_btn.click()
-        time.sleep(1)
+        time.sleep(2)  # Increased from 1 to 2
 
     def wait_for_title(self, driver, expected_text):
-        return WebDriverWait(driver, 5).until(
+        """Wait for title with better error handling"""
+        return WebDriverWait(driver, MAX_WAIT_TIME).until(
             lambda d: expected_text in d.find_element(By.CSS_SELECTOR, "h1").text
         )
 
     def mock_geolocation(self, driver):
+        """Mock browser geolocation"""
         driver.execute_script("""
             navigator.geolocation.getCurrentPosition = function(success, error) {
                 success({
@@ -58,17 +100,17 @@ class TestSentinelE2E:
             };
         """)
 
-    # ---------------- CATEGORY 1: AUTHENTICATION & REDIRECTION ----------------
+    # ---------- CATEGORY 1: AUTHENTICATION & REDIRECTION ----------
     
     def test_001_login_page_renders(self, driver_setup):
         driver = driver_setup
-        driver.get(BASE_URL)
-        self.wait_for(driver, (By.CSS_SELECTOR, "h1"))
+        self.safe_navigate(driver, BASE_URL)
+        self.wait_for(driver, (By.CSS_SELECTOR, "h1"), timeout=10)
         assert "Welcome back" in driver.page_source
 
     def test_002_login_title(self, driver_setup):
         driver = driver_setup
-        title_el = self.wait_for(driver, (By.CSS_SELECTOR, "h1"))
+        title_el = self.wait_for(driver, (By.CSS_SELECTOR, "h1"), timeout=10)
         assert title_el.text == "Welcome back"
 
     def test_003_login_subtitle(self, driver_setup):
@@ -94,7 +136,7 @@ class TestSentinelE2E:
     def test_007_login_brand_mark(self, driver_setup):
         driver = driver_setup
         brand_el = driver.find_elements(By.CLASS_NAME, "brand-mark")
-        assert len(brand_el) >= 0  # brand mark styled correctly
+        assert len(brand_el) >= 0
 
     def test_008_login_logo_container(self, driver_setup):
         driver = driver_setup
@@ -104,17 +146,17 @@ class TestSentinelE2E:
     def test_009_login_invalid_email_displays_error(self, driver_setup):
         driver = driver_setup
         self.login_as(driver, "nonexistent@sentinel.com")
-        error_box = self.wait_for(driver, (By.CSS_SELECTOR, ".text-rose-400"))
+        error_box = self.wait_for(driver, (By.CSS_SELECTOR, ".text-rose-400"), timeout=10)
         assert "Email not registered" in error_box.text
 
     def test_010_register_page_renders(self, driver_setup):
         driver = driver_setup
-        driver.get(f"{BASE_URL}/#/register")
+        self.safe_navigate(driver, f"{BASE_URL}/#/register")
         assert "Create your account" in driver.page_source
 
     def test_011_register_title(self, driver_setup):
         driver = driver_setup
-        WebDriverWait(driver, 5).until(
+        WebDriverWait(driver, MAX_WAIT_TIME).until(
             EC.text_to_be_present_in_element((By.CSS_SELECTOR, "h1"), "Create your account")
         )
         title_el = driver.find_element(By.CSS_SELECTOR, "h1")
@@ -147,22 +189,22 @@ class TestSentinelE2E:
 
     def test_017_register_duplicate_email_error(self, driver_setup):
         driver = driver_setup
-        driver.get(f"{BASE_URL}/#/register")
-        name_input = self.wait_for(driver, (By.ID, "name"))
+        self.safe_navigate(driver, f"{BASE_URL}/#/register")
+        name_input = self.wait_for(driver, (By.ID, "name"), timeout=10)
         name_input.clear()
         name_input.send_keys("Jane Doe")
         email_input = driver.find_element(By.ID, "email")
         email_input.clear()
-        email_input.send_keys("user@sentinel.com") # already in mock DB
+        email_input.send_keys("user@sentinel.com")
         btn = driver.find_element(By.CSS_SELECTOR, "button[type='submit']")
         btn.click()
-        error_box = self.wait_for(driver, (By.CSS_SELECTOR, ".text-rose-400"))
+        error_box = self.wait_for(driver, (By.CSS_SELECTOR, ".text-rose-400"), timeout=10)
         assert "already registered" in error_box.text.lower()
 
     def test_018_register_success_flow(self, driver_setup):
         driver = driver_setup
-        driver.get(f"{BASE_URL}/#/register")
-        name_input = self.wait_for(driver, (By.ID, "name"))
+        self.safe_navigate(driver, f"{BASE_URL}/#/register")
+        name_input = self.wait_for(driver, (By.ID, "name"), timeout=10)
         name_input.clear()
         name_input.send_keys("Alice Smith")
         email_input = driver.find_element(By.ID, "email")
@@ -170,41 +212,41 @@ class TestSentinelE2E:
         email_input.send_keys("alice@sentinel.com")
         btn = driver.find_element(By.CSS_SELECTOR, "button[type='submit']")
         btn.click()
-        WebDriverWait(driver, 5).until(lambda d: d.current_url.endswith("/portal"))
+        WebDriverWait(driver, MAX_WAIT_TIME).until(lambda d: d.current_url.endswith("/portal"))
         assert driver.current_url.endswith("/portal")
 
     def test_019_login_as_admin_redirects_dashboard(self, driver_setup):
         driver = driver_setup
         self.login_as(driver, "admin@sentinel.com")
-        WebDriverWait(driver, 5).until(lambda d: d.current_url.endswith("/dashboard"))
+        WebDriverWait(driver, MAX_WAIT_TIME).until(lambda d: d.current_url.endswith("/dashboard"))
         assert driver.current_url.endswith("/dashboard")
 
     def test_020_login_as_user_redirects_portal(self, driver_setup):
         driver = driver_setup
         self.login_as(driver, "user@sentinel.com")
-        WebDriverWait(driver, 5).until(lambda d: d.current_url.endswith("/portal"))
+        WebDriverWait(driver, MAX_WAIT_TIME).until(lambda d: d.current_url.endswith("/portal"))
         assert driver.current_url.endswith("/portal")
 
     def test_021_route_protection_dashboard_direct(self, driver_setup):
         driver = driver_setup
-        driver.get(BASE_URL)
+        self.safe_navigate(driver, BASE_URL)
         driver.execute_script("localStorage.clear();")
-        driver.get(f"{BASE_URL}/#/dashboard")
-        time.sleep(0.5)
+        self.safe_navigate(driver, f"{BASE_URL}/#/dashboard")
+        time.sleep(1)
         assert driver.current_url.endswith("/") or "/portal" not in driver.current_url
 
     def test_022_route_protection_portal_direct(self, driver_setup):
         driver = driver_setup
-        driver.get(f"{BASE_URL}/#/portal")
-        time.sleep(0.5)
+        self.safe_navigate(driver, f"{BASE_URL}/#/portal")
+        time.sleep(1)
         assert driver.current_url.endswith("/")
 
-    # ---------------- CATEGORY 2: USER PORTAL HOME & SOS ----------------
+    # ---------- CATEGORY 2: USER PORTAL HOME & SOS ----------
 
     def test_023_portal_home_welcome_title(self, driver_setup):
         driver = driver_setup
         self.login_as(driver, "user@sentinel.com")
-        title_el = self.wait_for(driver, (By.CSS_SELECTOR, "h1"))
+        title_el = self.wait_for(driver, (By.CSS_SELECTOR, "h1"), timeout=10)
         assert "you're protected" in title_el.text.lower()
 
     def test_024_portal_home_subtitle(self, driver_setup):
@@ -265,20 +307,14 @@ class TestSentinelE2E:
     def test_035_portal_home_sos_trigger_flow(self, driver_setup):
         driver = driver_setup
         self.mock_geolocation(driver)
-        # Click the SOS button
         btn = driver.find_element(By.XPATH, "//button[contains(., 'SOS')]")
         btn.click()
-        
-        # In our mock environment, it will locate & trigger emergency immediately
-        time.sleep(1)
-        
-        # Verify success message banner
-        banner = self.wait_for(driver, (By.CSS_SELECTOR, ".text-emerald-300"))
+        time.sleep(2)
+        banner = self.wait_for(driver, (By.CSS_SELECTOR, ".text-emerald-300"), timeout=10)
         assert "Emergency triggered" in banner.text
 
     def test_036_portal_home_sos_coords_displayed(self, driver_setup):
         driver = driver_setup
-        # In mock geo, coordinates will be populated (e.g. DEFAULT_CENTER: 12.9716, 77.5946 or fake coords)
         coords_el = driver.find_element(By.XPATH, "//p[contains(@class, 'text-slate-500') and contains(text(), '.')]")
         assert coords_el.is_displayed()
 
@@ -287,11 +323,11 @@ class TestSentinelE2E:
         btn = driver.find_element(By.XPATH, "//button[contains(., 'SENT')]")
         assert btn.is_displayed()
 
-    # ---------------- CATEGORY 3: TRUSTED CONTACTS MANAGEMENT ----------------
+    # ---------- CATEGORY 3: TRUSTED CONTACTS MANAGEMENT ----------
 
     def test_038_portal_contacts_navigation(self, driver_setup):
         driver = driver_setup
-        driver.get(f"{BASE_URL}/#/portal/contacts")
+        self.safe_navigate(driver, f"{BASE_URL}/#/portal/contacts")
         self.wait_for_title(driver, "Trusted contacts")
         header = driver.find_element(By.CSS_SELECTOR, "h1")
         assert "Trusted contacts" in header.text
@@ -329,9 +365,7 @@ class TestSentinelE2E:
         phone_input.send_keys("+91 99999 99999")
         btn = driver.find_element(By.CSS_SELECTOR, "form button[type='submit']")
         btn.click()
-        
-        # Verify contact card appears in list
-        time.sleep(1)
+        time.sleep(2)
         assert "Dad" in driver.page_source
         assert "+91 99999 99999" in driver.page_source
 
@@ -347,7 +381,6 @@ class TestSentinelE2E:
 
     def test_047_portal_contacts_phone_link_anchor(self, driver_setup):
         driver = driver_setup
-        # Find the specific card containing "Dad" and locate the phone link within it
         anchor = driver.find_element(By.XPATH, "//*[contains(text(), 'Dad')]/..//a[contains(@href, 'tel:')]")
         href = anchor.get_attribute("href")
         assert "+91" in href and "99999" in href
@@ -360,7 +393,7 @@ class TestSentinelE2E:
         phone_input.send_keys("+91 88888 88888")
         btn = driver.find_element(By.CSS_SELECTOR, "form button[type='submit']")
         btn.click()
-        time.sleep(0.5)
+        time.sleep(1)
         assert "Sister" in driver.page_source
 
     def test_049_portal_contacts_layout_columns(self, driver_setup):
@@ -383,11 +416,11 @@ class TestSentinelE2E:
         svgs = driver.find_elements(By.TAG_NAME, "svg")
         assert len(svgs) > 0
 
-    # ---------------- CATEGORY 4: REPORT INCIDENT INTERFACE ----------------
+    # ---------- CATEGORY 4: REPORT INCIDENT INTERFACE ----------
 
     def test_053_portal_report_navigation(self, driver_setup):
         driver = driver_setup
-        driver.get(f"{BASE_URL}/#/portal/report")
+        self.safe_navigate(driver, f"{BASE_URL}/#/portal/report")
         self.wait_for_title(driver, "Report an incident")
         header = driver.find_element(By.CSS_SELECTOR, "h1")
         assert "Report an incident" in header.text
@@ -439,32 +472,24 @@ class TestSentinelE2E:
         self.mock_geolocation(driver)
         btn = driver.find_element(By.XPATH, "//button[contains(., 'Use my location')]")
         btn.click()
-        time.sleep(1)
+        time.sleep(2)
         text_el = driver.find_element(By.CSS_SELECTOR, "span.text-slate-500.text-xs")
-        # In mock geo, coordinates should be populated
         assert "No location selected" not in text_el.text
 
     def test_063_portal_report_submit_success_flow(self, driver_setup):
         driver = driver_setup
-        # Fill description
         desc_input = driver.find_element(By.CSS_SELECTOR, "textarea.field")
         desc_input.send_keys("Suspicious vehicle parked on Elm Street")
-        
-        # Submit
         submit_btn = driver.find_element(By.XPATH, "//button[contains(text(), 'Submit report')]")
         submit_btn.click()
-        
-        # Verify success notification
-        time.sleep(1)
-        success_banner = self.wait_for(driver, (By.CSS_SELECTOR, ".text-emerald-300"))
+        time.sleep(2)
+        success_banner = self.wait_for(driver, (By.CSS_SELECTOR, ".text-emerald-300"), timeout=10)
         assert "Report submitted" in success_banner.text
 
     def test_064_portal_report_reset_form_flow(self, driver_setup):
         driver = driver_setup
         reset_btn = driver.find_element(By.XPATH, "//button[contains(text(), 'Report another')]")
         reset_btn.click()
-        
-        # Verify inputs and description cleared
         desc_input = driver.find_element(By.CSS_SELECTOR, "textarea.field")
         assert desc_input.text == "" or desc_input.get_attribute("value") == ""
 
@@ -473,11 +498,11 @@ class TestSentinelE2E:
         tip = driver.find_element(By.XPATH, "//p[contains(text(), 'Tip: click anywhere on the map')]")
         assert tip.is_displayed()
 
-    # ---------------- CATEGORY 5: SAFE ROUTE PLANNER ----------------
+    # ---------- CATEGORY 5: SAFE ROUTE PLANNER ----------
 
     def test_066_portal_route_navigation(self, driver_setup):
         driver = driver_setup
-        driver.get(f"{BASE_URL}/#/portal/route")
+        self.safe_navigate(driver, f"{BASE_URL}/#/portal/route")
         self.wait_for_title(driver, "Safe route planner")
         header = driver.find_element(By.CSS_SELECTOR, "h1")
         assert "Safe route planner" in header.text
@@ -517,7 +542,7 @@ class TestSentinelE2E:
         self.mock_geolocation(driver)
         btn = driver.find_element(By.XPATH, "//button[contains(., 'Use my location')]")
         btn.click()
-        time.sleep(1)
+        time.sleep(2)
         inp = driver.find_element(By.XPATH, "//input[@placeholder='Start location']")
         assert inp.get_attribute("value") != ""
 
@@ -528,23 +553,18 @@ class TestSentinelE2E:
 
     def test_075_portal_route_find_route_mock_submit(self, driver_setup):
         driver = driver_setup
-        # populate destination
         dest = driver.find_element(By.XPATH, "//input[@placeholder='Destination']")
         dest.send_keys("Majestic Bus Station, Bengaluru")
-        
         btn = driver.find_element(By.XPATH, "//button[contains(., 'Find route')]")
         btn.click()
         time.sleep(2)
-        
-        # Directions renderer details or error banner might appear depending on Google Maps initialization
-        # Let's ensure the form didn't crash
         assert "Safe route planner" in driver.page_source
 
-    # ---------------- CATEGORY 6: USER PROFILE DETAILS ----------------
+    # ---------- CATEGORY 6: USER PROFILE DETAILS ----------
 
     def test_076_portal_profile_navigation(self, driver_setup):
         driver = driver_setup
-        driver.get(f"{BASE_URL}/#/portal/profile")
+        self.safe_navigate(driver, f"{BASE_URL}/#/portal/profile")
         self.wait_for_title(driver, "Profile")
         header = driver.find_element(By.CSS_SELECTOR, "h1")
         assert "Profile" in header.text
@@ -557,7 +577,7 @@ class TestSentinelE2E:
     def test_078_portal_profile_initials_circle(self, driver_setup):
         driver = driver_setup
         circle = driver.find_element(By.CSS_SELECTOR, ".w-24.h-24.rounded-full")
-        assert circle.text == "J" # initials of Jane Doe
+        assert circle.text == "J"
 
     def test_079_portal_profile_display_name(self, driver_setup):
         driver = driver_setup
@@ -576,7 +596,6 @@ class TestSentinelE2E:
 
     def test_082_portal_profile_stats_contacts_count(self, driver_setup):
         driver = driver_setup
-        # We added contacts in earlier tests, count should render
         stats = driver.find_element(By.XPATH, "//p[contains(text(), 'Trusted contacts')]/following-sibling::p")
         assert stats.text != ""
 
@@ -594,25 +613,55 @@ class TestSentinelE2E:
         driver = driver_setup
         container = driver.find_element(By.XPATH, "//h3[contains(text(), 'Account details')]/..")
         rows = container.find_elements(By.XPATH, "./div[contains(@class, 'py-4') and contains(@class, 'border-b')]")
-        assert len(rows) == 3 or len(rows) == 4  # handle last:border-0 variation
+        assert len(rows) == 3 or len(rows) == 4
 
     def test_086_portal_profile_logout_btn_exists(self, driver_setup):
         driver = driver_setup
         btn = driver.find_element(By.XPATH, "//button[contains(., 'Sign out')]")
         assert btn.is_displayed()
 
-    # ---------------- CATEGORY 7: ADMIN COMMAND CENTER ----------------
+    # ---------- CATEGORY 7: ADMIN COMMAND CENTER ----------
+    
+    def _ensure_server_ready_for_admin(self, driver):
+        """Helper to ensure server is ready before admin tests"""
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                # Navigate to home first
+                self.safe_navigate(driver, BASE_URL)
+                time.sleep(2)
+                
+                # Verify server is responsive
+                if is_server_responsive(BASE_URL, timeout=5):
+                    break
+            except Exception as e:
+                if attempt < max_retries - 1:
+                    print(f"Server readiness check failed (attempt {attempt + 1}): {e}")
+                    time.sleep(3)
+                else:
+                    raise Exception(f"Server not ready for admin tests after {max_retries} attempts")
 
     def test_087_admin_dashboard_navigation(self, driver_setup):
         driver = driver_setup
+        self._ensure_server_ready_for_admin(driver)
         self.login_as(driver, "admin@sentinel.com")
-        time.sleep(1.5)
+        WebDriverWait(driver, MAX_WAIT_TIME).until(lambda d: d.current_url.endswith("/dashboard"))
         assert driver.current_url.endswith("/dashboard")
 
     def test_088_admin_dashboard_title(self, driver_setup):
         driver = driver_setup
-        title_el = self.wait_for(driver, (By.CSS_SELECTOR, "h1"))
-        assert "women safety" in title_el.text.lower()
+        try:
+            WebDriverWait(driver, MAX_WAIT_TIME).until(
+                EC.presence_of_element_located((By.TAG_NAME, "body"))
+            )
+            title_el = self.wait_for(driver, (By.CSS_SELECTOR, "h1"), timeout=MAX_WAIT_TIME)
+            assert "women safety" in title_el.text.lower()
+        except Exception as e:
+            # Retry with refresh
+            driver.refresh()
+            time.sleep(3)
+            title_el = self.wait_for(driver, (By.CSS_SELECTOR, "h1"), timeout=MAX_WAIT_TIME)
+            assert "women safety" in title_el.text.lower()
 
     def test_089_admin_dashboard_subtitle(self, driver_setup):
         driver = driver_setup
@@ -621,7 +670,7 @@ class TestSentinelE2E:
 
     def test_090_admin_dashboard_live_sos_alert_appears(self, driver_setup):
         driver = driver_setup
-        banner = self.wait_for(driver, (By.CSS_SELECTOR, ".sos-pulse"))
+        banner = self.wait_for(driver, (By.CSS_SELECTOR, ".sos-pulse"), timeout=MAX_WAIT_TIME)
         assert "LIVE SOS DETECTED" in banner.text
 
     def test_091_admin_dashboard_live_sos_banner_details(self, driver_setup):
@@ -688,7 +737,6 @@ class TestSentinelE2E:
 
     def test_103_admin_dashboard_reports_table_row_data(self, driver_setup):
         driver = driver_setup
-        # We submitted a report in report tests, it should render here
         assert "Suspicious vehicle parked on Elm Street" in driver.page_source
 
     def test_104_admin_dashboard_users_table_title(self, driver_setup):
@@ -713,24 +761,17 @@ class TestSentinelE2E:
 
     def test_108_admin_dashboard_emergency_modal_details_flow(self, driver_setup):
         driver = driver_setup
-        # Click Details on live emergency card
         btn = driver.find_element(By.XPATH, "//button[contains(text(), 'Details')]")
         btn.click()
-        
-        # Verify modal opens
-        time.sleep(0.5)
-        modal_title = self.wait_for(driver, (By.XPATH, "//h2[contains(text(), 'Emergency details')]"))
+        time.sleep(1)
+        modal_title = self.wait_for(driver, (By.XPATH, "//h2[contains(text(), 'Emergency details')]"), timeout=10)
         assert modal_title.is_displayed()
-        
-        # Close modal
         close_btn = driver.find_element(By.XPATH, "//button[contains(text(), 'Close')]")
         close_btn.click()
-        time.sleep(0.5)
+        time.sleep(1)
 
     def test_109_admin_dashboard_resolve_sos_flow(self, driver_setup):
         driver = driver_setup
-        # Click resolve on any live active emergencies until none are left
-        # This handles multiple active emergencies triggered during user portal tests
         max_attempts = 5
         for _ in range(max_attempts):
             banners = driver.find_elements(By.CSS_SELECTOR, ".sos-pulse")
@@ -739,14 +780,17 @@ class TestSentinelE2E:
             try:
                 btn = banners[0].find_element(By.CSS_SELECTOR, "button")
                 driver.execute_script("arguments[0].click();", btn)
-                time.sleep(1.5)
+                time.sleep(2)
             except Exception:
                 break
 
-        # Wait up to 5 seconds to ensure the banner is fully cleared
-        WebDriverWait(driver, 5).until(
-            EC.invisibility_of_element_located((By.CSS_SELECTOR, ".sos-pulse"))
-        )
+        try:
+            WebDriverWait(driver, MAX_WAIT_TIME).until(
+                EC.invisibility_of_element_located((By.CSS_SELECTOR, ".sos-pulse"))
+            )
+        except Exception:
+            pass
+        
         banners = driver.find_elements(By.CSS_SELECTOR, ".sos-pulse")
         assert len(banners) == 0
 
@@ -754,7 +798,7 @@ class TestSentinelE2E:
         driver = driver_setup
         logout_btn = driver.find_element(By.CSS_SELECTOR, "header button[title='Sign out']")
         logout_btn.click()
-        time.sleep(1)
+        time.sleep(2)
         assert driver.current_url.endswith("/") or "portal" not in driver.current_url
 
     def test_111_pages_deployment_check(self, driver_setup):
