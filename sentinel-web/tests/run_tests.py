@@ -32,7 +32,7 @@ def is_port_in_use(port):
             with socket.socket(family, socket.SOCK_STREAM) as s:
                 s.settimeout(0.5)
                 # For IPv6, connect expects (host, port, flowinfo, scope_id) but host/port tuple works on Windows
-                return s.connect_ex(('localhost', port)) == 0
+                return s.connect_ex(('127.0.0.1', port)) == 0
         except Exception:
             pass
     return False
@@ -50,7 +50,7 @@ def start_vite_server():
     print("Starting Vite dev server...")
     # Inject local API base URL environment variable
     env = os.environ.copy()
-    env["VITE_API_BASE_URL"] = "http://localhost:8000"
+    env["VITE_API_BASE_URL"] = "http://127.0.0.1:8000"
     
     # Run npm run dev
     process = subprocess.Popen(
@@ -66,7 +66,7 @@ def start_vite_server():
     start_time = time.time()
     while time.time() - start_time < 15:
         if is_port_in_use(5173):
-            print("Vite dev server is now active on http://localhost:5173.")
+            print("Vite dev server is now active on http://127.0.0.1:5173.")
             return process
         time.sleep(0.5)
     
