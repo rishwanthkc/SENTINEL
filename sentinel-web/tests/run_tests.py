@@ -52,13 +52,17 @@ def start_vite_server():
     env = os.environ.copy()
     env["VITE_API_BASE_URL"] = "http://127.0.0.1:8000"
     
+    # Open log file to prevent deadlock due to pipe buffers filling up
+    log_path = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), "vite.log"))
+    log_file = open(log_path, "w", encoding="utf-8")
+    
     # Run npm run dev
     process = subprocess.Popen(
         ["npm", "run", "dev"],
         shell=True,
         env=env,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        stdout=log_file,
+        stderr=log_file,
         text=True
     )
     
@@ -67,7 +71,7 @@ def start_vite_server():
     while time.time() - start_time < 15:
         if is_port_in_use(5173):
             print("Vite dev server is now active on http://127.0.0.1:5173.")
-            return process
+            return process, log_file
         time.sleep(0.5)
     
     print("Warning: Vite dev server did not respond on port 5173 within 15 seconds.")
@@ -76,15 +80,12 @@ def start_vite_server():
     if exit_code is not None:
         print(f"Error: Vite dev server process exited early with code {exit_code}.")
         try:
-            # Read stdout/stderr from process since it completed
-            stdout_text, stderr_text = process.communicate(timeout=1.0)
-            if stdout_text:
-                print(f"Vite stdout:\n{stdout_text}")
-            if stderr_text:
-                print(f"Vite stderr:\n{stderr_text}")
+            log_file.close()
+            with open(log_path, "r", encoding="utf-8") as f:
+                print(f"Vite logs:\n{f.read()}")
         except Exception as e:
             print(f"Could not read Vite output: {e}")
-    return process
+    return process, log_file
 
 # Pytest Result Collector Plugin
 class PytestResultCollector:
@@ -296,14 +297,14 @@ def main():
     start_mock_backend()
     
     # 2. Start Vite
-    vite_process = start_vite_server()
+    vite_process, vite_log = start_vite_server()
     
     # 3. Run Pytest programmatically
     collector = PytestResultCollector()
     print("Running E2E tests...")
     
     # Run the tests in the tests/test_e2e.py file
-    pytest.main([
+    pytest_exit_code = pytest.main([
         os.path.join(os.path.dirname(__file__), "test_e2e.py"),
         "-v",
         "--tb=short"
@@ -324,7 +325,14 @@ def main():
         except subprocess.TimeoutExpired:
             vite_process.kill()
             
+    if vite_log:
+        try:
+            vite_log.close()
+        except Exception:
+            pass
+            
     print("Testing completed successfully.")
+    sys.exit(pytest_exit_code)
 
 if __name__ == "__main__":
     main()
