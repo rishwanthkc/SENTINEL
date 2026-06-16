@@ -13,3 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Testing Reports
+/testing/excel-reports/
+/testing/summary/

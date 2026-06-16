@@ -270,6 +270,15 @@ def generate_excel_report(collector, start_time, end_time, duration):
 def main():
     start_time = datetime.now(timezone.utc)
     
+    # 0. Clean up any stale Excel report in the current directory to prevent uploading outdated artifacts
+    report_filename = "E2E_Test_Report_Sentinel.xlsx"
+    if os.path.exists(report_filename):
+        try:
+            os.remove(report_filename)
+            print(f"Removed stale report: {report_filename}")
+        except Exception as e:
+            print(f"Warning: Could not remove stale report: {e}")
+            
     # 1. Start Mock Backend
     start_mock_backend()
     

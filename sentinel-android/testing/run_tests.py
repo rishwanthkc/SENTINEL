@@ -194,6 +194,17 @@ def main():
     logger.info("  SENTINEL MOBILE APPLICATION AUTOMATED TESTING ENGINE")
     logger.info("==========================================================")
     
+    # 0. Clean up stale report files to avoid uploading outdated artifacts
+    excel_path = os.path.abspath(os.path.join(config.BASE_DIR, "excel-reports", "Sentinel_Appium_Test_Report.xlsx"))
+    pdf_path = os.path.abspath(os.path.join(config.BASE_DIR, "summary", "Sentinel_Final_QA_Report.pdf"))
+    for file_path in [excel_path, pdf_path]:
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+                logger.info(f"Removed stale report: {file_path}")
+            except Exception as e:
+                logger.warning(f"Could not remove stale report {file_path}: {e}")
+    
     # 1. Simulate execution step logs
     logger.info("Initializing Test Runner Context...")
     time.sleep(1)
