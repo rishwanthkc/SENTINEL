@@ -1,339 +1,52 @@
-# SENTINEL Frontend Dependencies Configuration
-# This YAML file serves as the single source of truth for all frontend dependency management
-# Last Updated: 2026-06-16
-# Version: 1.0.0
+name: Selenium E2E Tests
 
-# ============================================================================
-# NPM PRODUCTION DEPENDENCIES
-# ============================================================================
-npm:
-  production:
-    # UI Framework & Core
-    react:
-      version: "^19.2.6"
-      description: "React library for building user interfaces"
-      homepage: "https://react.dev"
-      
-    react-dom:
-      version: "^19.2.6"
-      description: "React package for working with the DOM"
-      homepage: "https://react.dev"
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
-    # Routing
-    react-router-dom:
-      version: "^7.16.0"
-      description: "DOM bindings for React Router"
-      homepage: "https://reactrouter.com"
-
-    # Mapping & Geolocation
-    react-leaflet:
-      version: "^5.0.0"
-      description: "React wrapper for Leaflet maps library"
-      homepage: "https://react-leaflet.js.org"
-      dependencies:
-        - leaflet
-
-    leaflet:
-      version: "^1.9.4"
-      description: "Open-source JavaScript library for interactive maps"
-      homepage: "https://leafletjs.com"
-
-    "@react-google-maps/api":
-      version: "^2.20.8"
-      description: "React wrapper for Google Maps API"
-      homepage: "https://react-google-maps-api-docs.netlify.app"
-
-    # Styling & CSS
-    "@tailwindcss/postcss":
-      version: "^4.3.0"
-      description: "Tailwind CSS PostCSS plugin"
-      homepage: "https://tailwindcss.com"
-      
-    "@tailwindcss/vite":
-      version: "^4.3.0"
-      description: "Tailwind CSS Vite plugin"
-      homepage: "https://tailwindcss.com"
-
-    tailwindcss:
-      version: "^4.3.0"
-      description: "Utility-first CSS framework"
-      homepage: "https://tailwindcss.com"
-
-  # ============================================================================
-  # NPM DEVELOPMENT DEPENDENCIES
-  # ============================================================================
-  development:
-    # Build Tool
-    vite:
-      version: "^8.0.12"
-      description: "Next generation frontend tooling"
-      homepage: "https://vitejs.dev"
-
-    "@vitejs/plugin-react":
-      version: "^6.0.1"
-      description: "Vite plugin for React projects with HMR"
-      homepage: "https://vitejs.dev"
-
-    # CSS Processing
-    postcss:
-      version: "^8.5.15"
-      description: "Tool for transforming CSS with JavaScript plugins"
-      homepage: "https://postcss.org"
-
-    autoprefixer:
-      version: "^10.5.0"
-      description: "PostCSS plugin to parse CSS and add vendor prefixes"
-      homepage: "https://github.com/postcss/autoprefixer"
-
-    # Linting
-    eslint:
-      version: "^10.3.0"
-      description: "JavaScript linter for identifying and fixing code issues"
-      homepage: "https://eslint.org"
-
-    "@eslint/js":
-      version: "^10.0.1"
-      description: "ESLint's built-in configuration"
-      homepage: "https://eslint.org"
-
-    eslint-plugin-react-refresh:
-      version: "^0.5.2"
-      description: "ESLint plugin for React Refresh"
-      homepage: "https://github.com/ArnaudBarre/eslint-plugin-react-refresh"
-
-    eslint-plugin-react-hooks:
-      version: "^7.1.1"
-      description: "ESLint plugin for React Hooks"
-      homepage: "https://github.com/facebook/react/tree/main/packages/eslint-plugin-react-hooks"
-
-    globals:
-      version: "^17.6.0"
-      description: "Global variables definition for ESLint"
-      homepage: "https://github.com/sindresorhus/globals"
-
-    # Type Definitions
-    "@types/react":
-      version: "^19.2.14"
-      description: "TypeScript type definitions for React"
-      homepage: "https://www.npmjs.com/package/@types/react"
-
-    "@types/react-dom":
-      version: "^19.2.3"
-      description: "TypeScript type definitions for React DOM"
-      homepage: "https://www.npmjs.com/package/@types/react-dom"
-
-# ============================================================================
-# PYTHON TESTING & SELENIUM DEPENDENCIES
-# ============================================================================
-python:
-  testing:
-    pytest:
-      version: "^7.0.0"
-      description: "Python testing framework"
-      homepage: "https://pytest.org"
-      requirements_file: "tests/requirements.txt"
-      note: "Add to requirements.txt if not present"
-
-    # Selenium WebDriver
-    selenium:
-      version: "^4.15.0"
-      description: "Browser automation framework for web application testing"
-      homepage: "https://www.selenium.dev"
-      requirements_file: "tests/requirements.txt"
-      note: "Add to requirements.txt if not present"
-
-    # Excel Reporting (for test reports)
-    openpyxl:
-      version: "^3.11.0"
-      description: "Python library to read/write Excel xlsx files"
-      homepage: "https://openpyxl.readthedocs.io"
-      requirements_file: "tests/requirements.txt"
-      note: "Already used in run_tests.py"
-
-  # ============================================================================
-  # SELENIUM DRIVERS & CONFIGURATION
-  # ============================================================================
-  selenium:
-    webdrivers:
-      chrome:
-        tool: "ChromeDriver"
-        version: "latest"
-        description: "WebDriver for Google Chrome/Chromium"
-        download_url: "https://googlechromelabs.github.io/chrome-for-testing/"
-        installation_method: "webdriver-manager (Python package)"
-        python_package: "webdriver-manager"
-        python_version: "^4.0.0"
-
-      firefox:
-        tool: "GeckoDriver"
-        version: "latest"
-        description: "WebDriver for Mozilla Firefox"
-        download_url: "https://github.com/mozilla/geckodriver/releases"
-        installation_method: "webdriver-manager (Python package)"
-        optional: true
-
-    configuration:
-      base_url: "http://localhost:5173"
-      headless_mode: true
-      implicit_wait: 3
-      default_timeout: 5
-      window_size: "1920x1080"
-      browser_options:
-        - "--headless"
-        - "--no-sandbox"
-        - "--disable-dev-shm-usage"
-        - "--disable-gpu"
-        - "--window-size=1920,1080"
-
-    testing_features:
-      - "E2E testing with Selenium WebDriver"
-      - "Headless browser execution"
-      - "Explicit waits with WebDriverWait"
-      - "Mock geolocation testing"
-      - "Login flow automation"
-      - "Excel report generation"
-
-# ============================================================================
-# BUILD CONFIGURATION
-# ============================================================================
-build:
-  vite:
-    entry_point: "src/main.jsx"
-    public_dir: "public"
-    build_dir: "dist"
-    plugins:
-      - "@vitejs/plugin-react"
-      - "@tailwindcss/vite"
-
-  postcss:
-    plugins:
-      - "tailwindcss"
-      - "autoprefixer"
-
-  output:
-    format: "es"
-    sourcemap: false
-    minify: "terser"
-
-# ============================================================================
-# DEVELOPMENT CONFIGURATION
-# ============================================================================
-development:
-  dev_server:
-    port: 5173
-    host: "localhost"
-    open: true
-    
-  hot_module_replacement:
-    enabled: true
-    protocol: "ws"
-
-  mock_backend:
-    port: 8000
-    url: "http://localhost:8000"
-
-  testing:
-    test_runner: "pytest"
-    e2e_tests:
-      frontend_url: "http://localhost:5173"
-      backend_url: "http://localhost:8000"
-      test_file: "tests/test_e2e.py"
-
-# ============================================================================
-# DEPENDENCY MIGRATION NOTES
-# ============================================================================
-dependency_migration:
-  source_files:
-    - "package.json (npm dependencies)"
-    - "tests/run_tests.py (pytest configuration)"
-    - "tests/test_e2e.py (Selenium configuration)"
-    - "vite.config.js (build configuration)"
-    - "eslint.config.js (linting configuration)"
-
-  consolidation_status:
-    npm_production: "consolidated"
-    npm_development: "consolidated"
-    python_testing: "consolidated"
-    selenium_configuration: "consolidated"
-    build_configuration: "consolidated"
-    development_configuration: "consolidated"
-
-  implementation_checklist:
-    - description: "Update package.json as the npm dependency source"
-      status: "existing"
-      note: "package.json remains the source for npm dependencies"
-    
-    - description: "Create/update tests/requirements.txt for Python dependencies"
-      status: "pending"
-      note: "Python testing dependencies should be listed in requirements.txt"
-    
-    - description: "Document WebDriver installation in tests/README.md"
-      status: "pending"
-      note: "Add webdriver-manager for automatic ChromeDriver/GeckoDriver management"
-    
-    - description: "Add YAML reference to project documentation"
-      status: "pending"
-      note: "Reference this file in project README"
-
-# ============================================================================
-# NPM SCRIPTS FOR DEPENDENCY MANAGEMENT
-# ============================================================================
-npm_scripts:
-  dev:
-    command: "vite"
-    description: "Start development server with HMR"
-
-  build:
-    command: "vite build"
-    description: "Build for production"
-
-  lint:
-    command: "eslint ."
-    description: "Run ESLint on project files"
-
-  preview:
-    command: "vite preview"
-    description: "Preview production build locally"
-
+jobs:
   test:
-    command: "cd tests && python run_tests.py"
-    description: "Run end-to-end tests"
+    name: Run Selenium E2E Tests
+    runs-on: ubuntu-latest
 
-# ============================================================================
-# NOTES & DOCUMENTATION
-# ============================================================================
-notes:
-  architecture: |
-    The frontend architecture uses:
-    - Vite as the build tool for fast development
-    - React 19 for UI components
-    - React Router for navigation
-    - Tailwind CSS + PostCSS for styling
-    - Leaflet/Google Maps for geolocation features
-    - Selenium for automated E2E testing
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-  installation: |
-    1. npm install (installs all npm dependencies from package.json)
-    2. pip install -r tests/requirements.txt (installs Python testing dependencies)
-    3. Python webdriver-manager handles ChromeDriver/GeckoDriver automatically
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: sentinel-web/package-lock.json
 
-  testing: |
-    Run tests with: python tests/run_tests.py
-    Tests will:
-    - Start mock backend on port 8000
-    - Start Vite dev server on port 5173
-    - Execute Selenium-based E2E tests
-    - Generate Excel report with results
+      - name: Install Node.js dependencies
+        run: |
+          cd sentinel-web
+          npm ci
 
-  dependency_updates: |
-    To update dependencies:
-    1. Update this YAML file with new versions
-    2. Update package.json for npm changes
-    3. Update tests/requirements.txt for Python changes
-    4. Run: npm install && pip install -r tests/requirements.txt
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: sentinel-web/tests/requirements.txt
 
-  security_considerations: |
-    - Keep dependency versions up-to-date for security patches
-    - Use --no-sandbox cautiously (only in CI/testing environments)
-    - Review security advisories regularly with: npm audit
-    - Use exact versions in production for reproducibility
+      - name: Install Python dependencies
+        run: |
+          cd sentinel-web
+          pip install -r tests/requirements.txt
+
+      - name: Run E2E Tests
+        run: |
+          cd sentinel-web
+          python tests/run_tests.py
+
+      - name: Upload E2E Test Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: selenium-test-report
+          path: sentinel-web/E2E_Test_Report_Sentinel*.xlsx
