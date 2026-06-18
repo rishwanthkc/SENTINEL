@@ -28,6 +28,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -64,6 +65,7 @@ jobs:
           git add -f security-testing/scripts/Sentinel_Load_Test_Report.xlsx
           if ! git diff-index --quiet HEAD --; then
             git commit -m "chore: auto-update Load Test report [skip ci]"
+            git pull --rebase origin ${{ github.ref }}
             git push origin HEAD:${{ github.ref }}
           else
             echo "No changes to commit. Skipping push."
