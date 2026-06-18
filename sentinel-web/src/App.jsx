@@ -53,7 +53,7 @@ function SeverityChip({ severity }) {
 }
 
 export default function App() {
-  const { isLoaded } = useMaps()
+  const { isLoaded, loadError } = useMaps()
   const navigate = useNavigate()
   const admin = getUser()
 
@@ -108,6 +108,7 @@ export default function App() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadAll()
     const interval = setInterval(loadAll, 5000)
     return () => clearInterval(interval)
@@ -267,8 +268,18 @@ export default function App() {
           <h2 className="text-2xl font-bold text-cyan-300 mb-6">
             Live Emergency Map
           </h2>
-          <div className="panel overflow-hidden">
-            {isLoaded ? (
+          <div className="panel overflow-hidden min-h-[500px] flex flex-col justify-center">
+            {loadError ? (
+              <div className="p-6 text-center space-y-3 text-rose-300">
+                <span className="inline-block px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-xs font-bold uppercase tracking-wider">
+                  Map Error
+                </span>
+                <p className="font-extrabold text-lg">Failed to load Map</p>
+                <p className="text-slate-400 text-xs max-w-sm mx-auto leading-relaxed">
+                  Please verify that your Google Maps API Key is valid and has billing enabled on the Google Cloud Console.
+                </p>
+              </div>
+            ) : isLoaded ? (
               <GoogleMap
                 mapContainerStyle={mapStyle}
                 center={DEFAULT_CENTER}
@@ -315,8 +326,18 @@ export default function App() {
           <h2 className="text-2xl font-bold text-cyan-300 mb-6">
             Incident Heatmap
           </h2>
-          <div className="panel overflow-hidden">
-            {isLoaded ? (
+          <div className="panel overflow-hidden min-h-[500px] flex flex-col justify-center">
+            {loadError ? (
+              <div className="p-6 text-center space-y-3 text-rose-300">
+                <span className="inline-block px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-xs font-bold uppercase tracking-wider">
+                  Map Error
+                </span>
+                <p className="font-extrabold text-lg">Failed to load Map</p>
+                <p className="text-slate-400 text-xs max-w-sm mx-auto leading-relaxed">
+                  Please verify that your Google Maps API Key is valid and has billing enabled on the Google Cloud Console.
+                </p>
+              </div>
+            ) : isLoaded ? (
               <GoogleMap
                 mapContainerStyle={mapStyle}
                 center={DEFAULT_CENTER}

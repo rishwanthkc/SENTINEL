@@ -8,10 +8,10 @@ import { getCurrentPosition } from "../../lib/geo"
 import PageHeader from "../../components/PageHeader"
 import { Route, MapPin } from "../../components/Icons"
 
-const mapStyle = { width: "100%", height: "100%" }
+const mapStyle = { width: "100%", height: "420px" }
 
 export default function SafeRoute() {
-  const { isLoaded } = useMaps()
+  const { isLoaded, loadError } = useMaps()
   const [origin, setOrigin] = useState("")
   const [destination, setDestination] = useState("")
   const [directions, setDirections] = useState(null)
@@ -131,8 +131,18 @@ export default function SafeRoute() {
           )}
         </form>
 
-        <div className="lg:col-span-2 panel overflow-hidden fade-up min-h-[420px]">
-          {isLoaded ? (
+        <div className="lg:col-span-2 panel overflow-hidden fade-up min-h-[420px] flex flex-col justify-center">
+          {loadError ? (
+            <div className="p-6 text-center space-y-3 text-rose-300">
+              <span className="inline-block px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-xs font-bold uppercase tracking-wider">
+                Map Error
+              </span>
+              <p className="font-extrabold text-lg">Failed to load Map</p>
+              <p className="text-slate-400 text-xs max-w-sm mx-auto leading-relaxed">
+                Please verify that your Google Maps API Key is valid and has billing enabled on the Google Cloud Console.
+              </p>
+            </div>
+          ) : isLoaded ? (
             <GoogleMap
               mapContainerStyle={mapStyle}
               center={DEFAULT_CENTER}

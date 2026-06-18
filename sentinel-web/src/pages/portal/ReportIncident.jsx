@@ -23,11 +23,11 @@ const SEVERITY = [
   { value: 3, label: "High", cls: "chip-high" },
 ]
 
-const mapStyle = { width: "100%", height: "100%" }
+const mapStyle = { width: "100%", height: "360px" }
 
 export default function ReportIncident() {
   const user = getUser()
-  const { isLoaded } = useMaps()
+  const { isLoaded, loadError } = useMaps()
 
   const [type, setType] = useState(TYPES[0])
   const [severity, setSeverity] = useState(2)
@@ -174,8 +174,18 @@ export default function ReportIncident() {
         </div>
 
         {/* Map */}
-        <div className="panel overflow-hidden fade-up min-h-[360px]">
-          {isLoaded ? (
+        <div className="panel overflow-hidden fade-up min-h-[360px] flex flex-col justify-center">
+          {loadError ? (
+            <div className="p-6 text-center space-y-3 text-rose-300">
+              <span className="inline-block px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-xs font-bold uppercase tracking-wider">
+                Map Error
+              </span>
+              <p className="font-extrabold text-lg">Failed to load Map</p>
+              <p className="text-slate-400 text-xs max-w-sm mx-auto leading-relaxed">
+                Please verify that your Google Maps API Key is valid and has billing enabled on the Google Cloud Console.
+              </p>
+            </div>
+          ) : isLoaded ? (
             <GoogleMap
               mapContainerStyle={mapStyle}
               center={center}
