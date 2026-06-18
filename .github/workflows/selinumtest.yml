@@ -10,6 +10,8 @@ jobs:
   test:
     name: Run Selenium E2E Tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout Repository
@@ -43,6 +45,19 @@ jobs:
         run: |
           cd sentinel-web
           python tests/run_tests.py
+
+      - name: Commit and Push E2E Test Report
+        if: always()
+        run: |
+          git config --global user.name "jeevan-1223"
+          git config --global user.email "192472080.simats@saveetha.com"
+          git add -f sentinel-web/E2E_Test_Report_Sentinel.xlsx
+          if ! git diff-index --quiet HEAD --; then
+            git commit -m "chore: auto-update E2E verification report [skip ci]"
+            git push origin HEAD:${{ github.ref }}
+          else
+            echo "No changes to commit. Skipping push."
+          fi
 
       - name: Upload E2E Test Report
         uses: actions/upload-artifact@v4
