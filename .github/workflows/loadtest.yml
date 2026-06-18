@@ -1,4 +1,4 @@
-name: Backend Vulnerability Assessment
+name: Backend Load Testing
 
 on:
   push:
@@ -7,9 +7,11 @@ on:
     branches: [ main ]
 
 jobs:
-  security-audit:
-    name: Run Vulnerability & Security Audit
+  load-test:
+    name: Run Backend Load Tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     services:
       mysql:
@@ -34,7 +36,7 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          pip install openpyxl fpdf2 PyJWT requests
+          pip install openpyxl requests
           cd sentinel-backend
           pip install -r requirements.txt
 
@@ -50,27 +52,26 @@ jobs:
           python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 &
           sleep 5
 
-      - name: Run Security Artifacts Generator
+      - name: Run Load Test
         run: |
-          cd sentinel-backend/security-testing/scripts
-          python generate_security_artifacts.py
+          cd security-testing/scripts
+          python load_test.py 100 60
 
-      - name: Run Security Test Runner (Assessment)
+      - name: Commit and Push Load Test Report
         run: |
-          cd sentinel-backend
-          python security-testing/scripts/security_test_runner.py
+          git config --global user.name "jeevan-1223"
+          git config --global user.email "192472080.simats@saveetha.com"
+          git add -f security-testing/scripts/Sentinel_Load_Test_Report.xlsx
+          if ! git diff-index --quiet HEAD --; then
+            git commit -m "chore: auto-update Load Test report [skip ci]"
+            git push origin HEAD:${{ github.ref }}
+          else
+            echo "No changes to commit. Skipping push."
+          fi
 
-      - name: Upload Security Reports
+      - name: Upload Load Test Report
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: security-assessment-reports
-          path: |
-            sentinel-backend/security-testing/reports/Backend_Security_Assessment.xlsx
-            sentinel-backend/security-testing/reports/Backend_Security_Assessment.pdf
-            sentinel-backend/security-testing/reports/FINAL_SECURITY_SUMMARY.md
-            sentinel-backend/security-testing/reports/security_report.json
-            sentinel-backend/security-testing/reports/access_matrix.xlsx
-            sentinel-backend/security-testing/reports/rbac_matrix.xlsx
-
-
+          name: load-test-report
+          path: security-testing/scripts/Sentinel_Load_Test_Report.xlsx
