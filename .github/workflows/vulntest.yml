@@ -10,6 +10,18 @@ jobs:
   security-audit:
     name: Run Vulnerability & Security Audit
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: sentinel_db
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Checkout Repository
@@ -25,6 +37,20 @@ jobs:
       - name: Install Python dependencies
         run: |
           pip install openpyxl fpdf2 PyJWT requests
+          cd sentinel-backend
+          pip install -r requirements.txt
+
+      - name: Start Backend API
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_USER: root
+          DB_PASSWORD: root
+          DB_NAME: sentinel_db
+        run: |
+          cd sentinel-backend
+          python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 &
+          sleep 5
 
       - name: Run Security Artifacts Generator
         run: |
@@ -33,8 +59,26 @@ jobs:
 
       - name: Run Security Test Runner (Assessment)
         run: |
+          cd sentinel-backend
+          python security-testing/scripts/security_test_runner.py
+
+      - name: Run Load Test
+        run: |
           cd sentinel-backend/security-testing/scripts
-          python security_test_runner.py
+          python load_test.py 100 60
+
+      - name: Commit and Push Load Test Report
+        run: |
+          cp sentinel-backend/security-testing/scripts/Sentinel_Load_Test_Report.xlsx security-testing/scripts/Sentinel_Load_Test_Report.xlsx
+          git config --global user.name "jeevan-1223"
+          git config --global user.email "192472080.simats@saveetha.com"
+          git add -f security-testing/scripts/Sentinel_Load_Test_Report.xlsx
+          if ! git diff-index --quiet HEAD --; then
+            git commit -m "chore: auto-update Load Test report [skip ci]"
+            git push origin HEAD:${{ github.ref }}
+          else
+            echo "No changes to commit. Skipping push."
+          fi
 
       - name: Upload Security Reports
         uses: actions/upload-artifact@v4
@@ -48,3 +92,5 @@ jobs:
             sentinel-backend/security-testing/reports/security_report.json
             sentinel-backend/security-testing/reports/access_matrix.xlsx
             sentinel-backend/security-testing/reports/rbac_matrix.xlsx
+            security-testing/scripts/Sentinel_Load_Test_Report.xlsx
+
