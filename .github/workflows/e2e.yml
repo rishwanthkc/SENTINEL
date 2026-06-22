@@ -1,0 +1,303 @@
+name: SENTINEL QA E2E Verification Suite
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  selenium-tests:
+    name: Selenium -- Website Tests (300)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: sentinel-web/package-lock.json
+
+      - name: Install Node.js dependencies
+        run: |
+          cd sentinel-web
+          npm ci
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: sentinel-web/tests/requirements.txt
+
+      - name: Install Python dependencies
+        run: |
+          cd sentinel-web
+          pip install -r tests/requirements.txt
+
+      - name: Run Website E2E Tests
+        run: |
+          cd sentinel-web
+          python tests/run_tests.py
+
+      - name: Upload Selenium Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-web-report
+          path: sentinel-web/E2E_Test_Report_Sentinel.xlsx
+
+  appium-tests:
+    name: Appium -- Android Tests (300)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          pip install openpyxl reportlab pytest selenium Appium-Python-Client
+
+      - name: Run Android Appium Tests
+        run: |
+          cd sentinel-android/testing
+          python run_tests.py
+
+      - name: Upload Appium Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: appium-android-report
+          path: |
+            sentinel-android/testing/excel-reports/Sentinel_Appium_Test_Report.xlsx
+            sentinel-android/testing/summary/Sentinel_Final_QA_Report.pdf
+            sentinel-android/testing/summary/bug_report.md
+            sentinel-android/testing/summary/deployment_readiness_report.md
+
+  unit-tests:
+    name: Unit Tests -- API (300)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          pip install openpyxl
+
+      - name: Run API Unit Tests
+        run: |
+          cd security-testing/scripts
+          python run_unit_tests.py
+
+      - name: Upload Unit Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-report
+          path: security-testing/scripts/Sentinel_Unit_Test_Report.xlsx
+
+  validation-tests:
+    name: Validation Tests (300)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          pip install openpyxl
+
+      - name: Run Validation Tests
+        run: |
+          cd security-testing/scripts
+          python run_validation_tests.py
+
+      - name: Upload Validation Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-test-report
+          path: security-testing/scripts/Sentinel_Validation_Test_Report.xlsx
+
+  deployment-tests:
+    name: Deployment Status (300)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          pip install openpyxl
+
+      - name: Run Deployment Status Tests
+        run: |
+          cd security-testing/scripts
+          python run_deployment_tests.py
+
+      - name: Upload Deployment Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-test-report
+          path: security-testing/scripts/Sentinel_Deployment_Test_Report.xlsx
+
+  load-tests:
+    name: Load Testing -- Performance (300)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          pip install openpyxl requests
+
+      - name: Run Load Testing
+        run: |
+          cd security-testing/scripts
+          python load_test.py 100 60
+
+      - name: Upload Load Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: load-test-report
+          path: security-testing/scripts/Sentinel_Load_Test_Report.xlsx
+
+  compile-report-and-deploy:
+    name: Compile Master Report & Deploy
+    runs-on: ubuntu-latest
+    needs: [selenium-tests, appium-tests, unit-tests, validation-tests, deployment-tests, load-tests]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          pip install openpyxl
+
+      - name: Create artifacts download workspace
+        run: mkdir -p artifacts/selenium-web-report artifacts/appium-android-report artifacts/unit-test-report artifacts/validation-test-report artifacts/deployment-test-report artifacts/load-test-report
+
+      - name: Download Selenium Report
+        uses: actions/download-artifact@v4
+        with:
+          name: selenium-web-report
+          path: artifacts/selenium-web-report
+
+      - name: Download Appium Report
+        uses: actions/download-artifact@v4
+        with:
+          name: appium-android-report
+          path: artifacts/appium-android-report
+
+      - name: Download Unit Report
+        uses: actions/download-artifact@v4
+        with:
+          name: unit-test-report
+          path: artifacts/unit-test-report
+
+      - name: Download Validation Report
+        uses: actions/download-artifact@v4
+        with:
+          name: validation-test-report
+          path: artifacts/validation-test-report
+
+      - name: Download Deployment Report
+        uses: actions/download-artifact@v4
+        with:
+          name: deployment-test-report
+          path: artifacts/deployment-test-report
+
+      - name: Download Load Report
+        uses: actions/download-artifact@v4
+        with:
+          name: load-test-report
+          path: artifacts/load-test-report
+
+      - name: Run Compile Master Report Script
+        run: |
+          python security-testing/scripts/compile_master_report.py
+
+      - name: Commit and Push E2E Test Reports
+        run: |
+          git config --global user.name "jeevan-1223"
+          git config --global user.email "192472080.simats@saveetha.com"
+          
+          # Move compiled files to git locations for tracking
+          cp artifacts/selenium-web-report/E2E_Test_Report_Sentinel.xlsx sentinel-web/E2E_Test_Report_Sentinel.xlsx || true
+          cp artifacts/appium-android-report/Sentinel_Appium_Test_Report.xlsx sentinel-android/testing/excel-reports/Sentinel_Appium_Test_Report.xlsx || true
+          cp artifacts/unit-test-report/Sentinel_Unit_Test_Report.xlsx security-testing/scripts/Sentinel_Unit_Test_Report.xlsx || true
+          cp artifacts/validation-test-report/Sentinel_Validation_Test_Report.xlsx security-testing/scripts/Sentinel_Validation_Test_Report.xlsx || true
+          cp artifacts/deployment-test-report/Sentinel_Deployment_Test_Report.xlsx security-testing/scripts/Sentinel_Deployment_Test_Report.xlsx || true
+          cp artifacts/load-test-report/Sentinel_Load_Test_Report.xlsx security-testing/scripts/Sentinel_Load_Test_Report.xlsx || true
+          
+          git add -f sentinel-web/E2E_Test_Report_Sentinel.xlsx
+          git add -f sentinel-android/testing/excel-reports/Sentinel_Appium_Test_Report.xlsx
+          git add -f security-testing/scripts/Sentinel_Unit_Test_Report.xlsx
+          git add -f security-testing/scripts/Sentinel_Validation_Test_Report.xlsx
+          git add -f security-testing/scripts/Sentinel_Deployment_Test_Report.xlsx
+          git add -f security-testing/scripts/Sentinel_Load_Test_Report.xlsx
+          
+          if ! git diff-index --quiet HEAD --; then
+            git commit -m "chore: auto-update E2E verification reports [skip ci]"
+            git push origin HEAD:${{ github.ref }}
+          else
+            echo "No changes to commit. Skipping push."
+          fi
+
+      - name: Upload Consolidated E2E Master Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: full-e2e-report
+          path: dist/Sentinel_Master_E2E_Report.xlsx
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
