@@ -204,6 +204,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -215,7 +218,7 @@ jobs:
           pip install openpyxl
 
       - name: Create artifacts download workspace
-        run: mkdir -p artifacts/selenium-web-report artifacts/appium-android-report artifacts/unit-test-report artifacts/validation-test-report artifacts/deployment-test-report artifacts/load-test-report
+        run: mkdir -p artifacts/selenium-web-report artifacts/appium-android-report artifacts/unit-test-report artifacts/validation-test-report artifacts/deployment-test-report artifacts/load-tes
 
       - name: Download Selenium Report
         uses: actions/download-artifact@v4
@@ -259,9 +262,10 @@ jobs:
 
       - name: Commit and Push E2E Test Reports
         run: |
+          set -euo pipefail
           git config --global user.name "jeevan-1223"
           git config --global user.email "192472080.simats@saveetha.com"
-          
+
           # Move compiled files to git locations for tracking
           cp artifacts/selenium-web-report/E2E_Test_Report_Sentinel.xlsx sentinel-web/E2E_Test_Report_Sentinel.xlsx || true
           cp artifacts/appium-android-report/Sentinel_Appium_Test_Report.xlsx sentinel-android/testing/excel-reports/Sentinel_Appium_Test_Report.xlsx || true
@@ -269,17 +273,34 @@ jobs:
           cp artifacts/validation-test-report/Sentinel_Validation_Test_Report.xlsx security-testing/scripts/Sentinel_Validation_Test_Report.xlsx || true
           cp artifacts/deployment-test-report/Sentinel_Deployment_Test_Report.xlsx security-testing/scripts/Sentinel_Deployment_Test_Report.xlsx || true
           cp artifacts/load-test-report/Sentinel_Load_Test_Report.xlsx security-testing/scripts/Sentinel_Load_Test_Report.xlsx || true
-          
-          git add -f sentinel-web/E2E_Test_Report_Sentinel.xlsx
-          git add -f sentinel-android/testing/excel-reports/Sentinel_Appium_Test_Report.xlsx
-          git add -f security-testing/scripts/Sentinel_Unit_Test_Report.xlsx
-          git add -f security-testing/scripts/Sentinel_Validation_Test_Report.xlsx
-          git add -f security-testing/scripts/Sentinel_Deployment_Test_Report.xlsx
-          git add -f security-testing/scripts/Sentinel_Load_Test_Report.xlsx
-          
+
+          # Add files
+          git add -A sentinel-web/E2E_Test_Report_Sentinel.xlsx \
+                    sentinel-android/testing/excel-reports/Sentinel_Appium_Test_Report.xlsx \
+                    security-testing/scripts/Sentinel_Unit_Test_Report.xlsx \
+                    security-testing/scripts/Sentinel_Validation_Test_Report.xlsx \
+                    security-testing/scripts/Sentinel_Deployment_Test_Report.xlsx \
+                    security-testing/scripts/Sentinel_Load_Test_Report.xlsx
+
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+
           if ! git diff-index --quiet HEAD --; then
             git commit -m "chore: auto-update E2E verification reports [skip ci]"
-            git push origin HEAD:${{ github.ref }}
+
+            # Ensure we have the latest remote changes and integrate them before pushing
+            git fetch origin "$BRANCH_NAME"
+
+            # Try to rebase on top of the remote branch to keep history linear; if rebase fails, fall back to merge
+            if git rebase "origin/$BRANCH_NAME"; then
+              echo "Rebase successful"
+            else
+              echo "Rebase failed, aborting and falling back to merge"
+              git rebase --abort || true
+              git merge --no-edit "origin/$BRANCH_NAME" || true
+            fi
+
+            # Push using force-with-lease to avoid clobbering concurrent updates
+            git push origin "HEAD:$BRANCH_NAME" --force-with-lease
           else
             echo "No changes to commit. Skipping push."
           fi
