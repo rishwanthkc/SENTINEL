@@ -20,6 +20,7 @@ candidate_paths = {
         os.path.join(BASE_DIR, "E2E_Test_Report_Sentinel.xlsx")
     ],
     "appium": [
+        os.path.join(PROJECT_ROOT, "artifacts", "appium-android-report", "sentinel-android", "testing", "excel-reports", "Sentinel_Appium_Test_Report.xlsx"),
         os.path.join(PROJECT_ROOT, "sentinel-android", "testing", "excel-reports", "Sentinel_Appium_Test_Report.xlsx"),
         os.path.join(PROJECT_ROOT, "artifacts", "appium-android-report", "Sentinel_Appium_Test_Report.xlsx"),
         os.path.join(BASE_DIR, "Sentinel_Appium_Test_Report.xlsx")

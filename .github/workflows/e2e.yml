@@ -268,7 +268,7 @@ jobs:
 
           # Move compiled files to git locations for tracking
           cp artifacts/selenium-web-report/E2E_Test_Report_Sentinel.xlsx sentinel-web/E2E_Test_Report_Sentinel.xlsx || true
-          cp artifacts/appium-android-report/Sentinel_Appium_Test_Report.xlsx sentinel-android/testing/excel-reports/Sentinel_Appium_Test_Report.xlsx || true
+          cp artifacts/appium-android-report/sentinel-android/testing/excel-reports/Sentinel_Appium_Test_Report.xlsx sentinel-android/testing/excel-reports/Sentinel_Appium_Test_Report.xlsx || true
           cp artifacts/unit-test-report/Sentinel_Unit_Test_Report.xlsx security-testing/scripts/Sentinel_Unit_Test_Report.xlsx || true
           cp artifacts/validation-test-report/Sentinel_Validation_Test_Report.xlsx security-testing/scripts/Sentinel_Validation_Test_Report.xlsx || true
           cp artifacts/deployment-test-report/Sentinel_Deployment_Test_Report.xlsx security-testing/scripts/Sentinel_Deployment_Test_Report.xlsx || true
