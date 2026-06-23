@@ -60,7 +60,7 @@ graph TD
 ## 5. Security & Network Architecture
 
 ### Retrofit Clients
-* **RetrofitClient**: Interacts with the backend server hosted at `https://sentinel-backend-buti.onrender.com/` for authentication, emergency triggers, and incident reports.
+* **RetrofitClient**: Interacts with the backend server hosted at `https://sentinel-backend-production-8057.up.railway.app/` for authentication, emergency triggers, and incident reports.
 * **DirectionsRetrofit**: Connects to the Google Directions API to fetch route options.
 * **GeocodingRetrofit**: Interacts with Google Geocoding API to resolve coordinates to addresses.
 
