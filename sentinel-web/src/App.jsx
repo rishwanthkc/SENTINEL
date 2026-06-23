@@ -107,6 +107,20 @@ export default function App() {
     total_contacts: 0,
   })
 
+  // Track last seen emergency IDs to trigger sound alerts
+  const [lastSeenEmergencyIds, setLastSeenEmergencyIds] = useState([])
+  const [hasLoadedInitially, setHasLoadedInitially] = useState(false)
+  const [toasts, setToasts] = useState([])
+  const isFirstLoad = React.useRef(true)
+
+  const addToast = (message, type = "info") => {
+    const id = Date.now()
+    setToasts(prev => [...prev, { id, message, type }])
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id))
+    }, 6000)
+  }
+
   // 1. Dashboard specific mock states
   const [activeUsersToday, setActiveUsersToday] = useState(18)
   const [recentActivities, setRecentActivities] = useState([
@@ -212,6 +226,46 @@ export default function App() {
     return () => clearInterval(interval)
   }, [trackingSOS])
 
+  // Synthesize siren beep and trigger toast to alert Admin when new SOS arrives
+  useEffect(() => {
+    if (!hasLoadedInitially) return
+
+    const activeIds = emergencies.map(e => e.id)
+    
+    if (isFirstLoad.current) {
+      setLastSeenEmergencyIds(activeIds)
+      isFirstLoad.current = false
+      return
+    }
+
+    const hasNewSOS = activeIds.some(id => !lastSeenEmergencyIds.includes(id))
+    
+    if (hasNewSOS) {
+      const newEmergencies = emergencies.filter(e => !lastSeenEmergencyIds.includes(e.id))
+      newEmergencies.forEach(e => {
+        addToast(`CRITICAL: SOS triggered by ${e.user_email}!`, "danger")
+      })
+
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+        const osc = audioCtx.createOscillator()
+        const gainNode = audioCtx.createGain()
+        osc.type = "sine"
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime) // High beep
+        osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.3)
+        gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime)
+        gainNode.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.4)
+        osc.connect(gainNode)
+        gainNode.connect(audioCtx.destination)
+        osc.start()
+        osc.stop(audioCtx.currentTime + 0.4)
+      } catch (err) {
+        console.log("Audio warning: autoplay blocked", err)
+      }
+    }
+    setLastSeenEmergencyIds(activeIds)
+  }, [emergencies, lastSeenEmergencyIds, hasLoadedInitially])
+
   async function loadAll() {
     try {
       const [s, e, r, u, h] = await Promise.all([
@@ -226,6 +280,7 @@ export default function App() {
       setReports(Array.isArray(r) ? r : [])
       setUsers(Array.isArray(u) ? u : [])
       setHotspots(Array.isArray(h) ? h : [])
+      setHasLoadedInitially(true)
     } catch (err) {
       console.log(err)
     }
@@ -262,7 +317,7 @@ export default function App() {
 
   useEffect(() => {
     loadAll()
-    const interval = setInterval(loadAll, 5000)
+    const interval = setInterval(loadAll, 3000)
     return () => clearInterval(interval)
   }, [])
 
@@ -754,7 +809,7 @@ export default function App() {
           {/* Active Live SOS banner (shown on all tabs for quick actions) */}
           {emergencies.length > 0 && (
             <div className="mb-8 panel p-6 border-rose-500/50 bg-rose-500/10 sos-pulse flex flex-col sm:flex-row items-start sm:items-center gap-5 fade-up">
-              <span className="text-rose-400">
+              <span className="text-rose-400 animate-bounce">
                 <Siren width={36} height={36} />
               </span>
               <div className="flex-1 min-w-0">
@@ -766,6 +821,7 @@ export default function App() {
                 </div>
                 <p className="text-slate-300 mt-1 truncate text-sm">
                   {emergencies[0].user_email} · Location: {emergencies[0].latitude}, {emergencies[0].longitude}
+                  {emergencies.length > 1 && ` (+${emergencies.length - 1} more active)`}
                 </p>
               </div>
               <div className="flex gap-2 w-full sm:w-auto">
@@ -810,7 +866,7 @@ export default function App() {
                 </div>
                 <div className="panel p-5 sm:p-6 flex flex-col justify-between">
                   <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Active SOS Alerts</p>
-                  <p className="text-4xl sm:text-5xl font-extrabold mt-3 text-rose-400">{stats.active_emergencies}</p>
+                  <p className="text-4xl sm:text-5xl font-extrabold mt-3 text-rose-400">{emergencies.length}</p>
                   <p className="text-[10px] text-rose-500 mt-2">Immediate response required</p>
                 </div>
                 <div className="panel p-5 sm:p-6 flex flex-col justify-between">
@@ -819,6 +875,47 @@ export default function App() {
                   <p className="text-[10px] text-amber-500 mt-2">Based on incident severity</p>
                 </div>
               </div>
+
+              {/* CRITICAL UPDATE: Live Active SOS Alerts list on Dashboard */}
+              {emergencies.length > 0 && (
+                <div className="panel p-6 border-rose-500/40 bg-rose-500/5 space-y-4 shadow-[0_0_20px_rgba(244,63,94,0.15)] animate-pulse-subtle">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <span className="live-dot" />
+                      <h3 className="text-lg font-bold text-rose-300">Live Active SOS Emergencies</h3>
+                    </div>
+                    <span className="chip chip-high text-[10px]">{emergencies.length} ACTIVE</span>
+                  </div>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {emergencies.map((item) => (
+                      <div key={item.id} className="p-4 rounded-xl bg-[#180a0f] border border-rose-500/30 flex flex-col justify-between space-y-4">
+                        <div>
+                          <p className="text-sm font-bold text-rose-200 truncate">{item.user_email}</p>
+                          <p className="text-xs text-slate-400 mt-1">Coordinates: {item.latitude.toFixed(5)}, {item.longitude.toFixed(5)}</p>
+                          <p className="text-[10px] text-slate-500 mt-1">Triggered: {item.created_at}</p>
+                        </div>
+                        <div className="flex gap-2 pt-2 border-t border-rose-500/10">
+                          <button
+                            className="btn btn-ghost text-[10px] py-1 px-3 flex-1"
+                            onClick={() => {
+                              setTrackingSOS(item)
+                              setActiveTab("map")
+                            }}
+                          >
+                            Track Live
+                          </button>
+                          <button
+                            className="btn btn-danger text-[10px] py-1 px-3 flex-1"
+                            onClick={() => handleResolve(item.id, item.user_email)}
+                          >
+                            Resolve
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Secondary stats row */}
               <div className="grid lg:grid-cols-3 gap-6">
@@ -955,8 +1052,8 @@ export default function App() {
                                 onClick={() => setSelectedUserContacts({
                                   email: user.email,
                                   contacts: [
-                                    { name: "Emergency Contact 1 (Primary)", phone: "+919876543210" },
-                                    { name: "Emergency Contact 2 (Secondary)", phone: "+919876543211" },
+                                    { name: "Mom", phone: "+919876543210" },
+                                    { name: "Brother", phone: "+919876543211" },
                                   ]
                                 })}
                               >
@@ -1202,80 +1299,131 @@ export default function App() {
                 </div>
               )}
 
-              {/* Map Panel */}
-              <div className="panel overflow-hidden min-h-[550px] flex flex-col justify-center relative">
-                {loadError ? (
-                  <div className="p-6 text-center space-y-3 text-rose-300">
-                    <span className="inline-block px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-xs font-bold uppercase tracking-wider">Map Error</span>
-                    <p className="font-extrabold text-lg">Failed to load Map</p>
-                    <p className="text-slate-400 text-xs max-w-sm mx-auto">Please check Maps billing settings in GCP Console.</p>
-                  </div>
-                ) : isLoaded ? (
-                  <GoogleMap
-                    mapContainerStyle={mapStyle}
-                    center={trackingSOS ? { lat: trackingSOS.latitude + simulatedOffset.lat, lng: trackingSOS.longitude + simulatedOffset.lng } : DEFAULT_CENTER}
-                    zoom={trackingSOS ? 15 : 12}
-                    options={mapOptions}
-                  >
-                    {/* Active Emergencies Markers */}
-                    {emergencies.map((item) => (
-                      <Marker
-                        key={item.id}
-                        position={{
-                          lat: item.id === trackingSOS?.id ? item.latitude + simulatedOffset.lat : item.latitude,
-                          lng: item.id === trackingSOS?.id ? item.longitude + simulatedOffset.lng : item.longitude
-                        }}
-                        icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png"
-                        onClick={() => setSelectedEmergency(item)}
-                      />
-                    ))}
+              {/* 2-Column Map view: Map + Active SOS sidebar */}
+              <div className="grid lg:grid-cols-4 gap-6">
+                {/* Map display */}
+                <div className="panel overflow-hidden min-h-[550px] lg:col-span-3 flex flex-col justify-center relative">
+                  {loadError ? (
+                    <div className="p-6 text-center space-y-3 text-rose-300">
+                      <span className="inline-block px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-xs font-bold uppercase tracking-wider">Map Error</span>
+                      <p className="font-extrabold text-lg">Failed to load Map</p>
+                      <p className="text-slate-400 text-xs max-w-sm mx-auto">Please check Maps billing settings in GCP Console.</p>
+                    </div>
+                  ) : isLoaded ? (
+                    <GoogleMap
+                      mapContainerStyle={mapStyle}
+                      center={trackingSOS ? { lat: trackingSOS.latitude + simulatedOffset.lat, lng: trackingSOS.longitude + simulatedOffset.lng } : DEFAULT_CENTER}
+                      zoom={trackingSOS ? 15 : 12}
+                      options={mapOptions}
+                    >
+                      {/* Active Emergencies Markers */}
+                      {emergencies.map((item) => (
+                        <Marker
+                          key={item.id}
+                          position={{
+                            lat: item.id === trackingSOS?.id ? item.latitude + simulatedOffset.lat : item.latitude,
+                            lng: item.id === trackingSOS?.id ? item.longitude + simulatedOffset.lng : item.longitude
+                          }}
+                          icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+                          onClick={() => setSelectedEmergency(item)}
+                        />
+                      ))}
 
-                    {/* Zone Geo-fences overlays */}
-                    {zones.map((zone) => (
-                      <Circle
-                        key={zone.id}
-                        center={{ lat: zone.lat, lng: zone.lng }}
-                        radius={zone.radius}
-                        options={{
-                          fillColor: zone.type === "Safe" ? "#10b981" : "#f43f5e",
-                          fillOpacity: 0.15,
-                          strokeColor: zone.type === "Safe" ? "#10b981" : "#f43f5e",
-                          strokeWeight: 1.5,
-                        }}
-                      />
-                    ))}
+                      {/* Zone Geo-fences overlays */}
+                      {zones.map((zone) => (
+                        <Circle
+                          key={zone.id}
+                          center={{ lat: zone.lat, lng: zone.lng }}
+                          radius={zone.radius}
+                          options={{
+                            fillColor: zone.type === "Safe" ? "#10b981" : "#f43f5e",
+                            fillOpacity: 0.15,
+                            strokeColor: zone.type === "Safe" ? "#10b981" : "#f43f5e",
+                            strokeWeight: 1.5,
+                          }}
+                        />
+                      ))}
 
-                    {/* Incident Hotspot Circles */}
-                    {reports.map((r, idx) => (
-                      <Circle
-                        key={idx}
-                        center={{ lat: parseFloat(r.latitude) || 13.08, lng: parseFloat(r.longitude) || 80.27 }}
-                        radius={r.severity === 3 ? 400 : r.severity === 2 ? 250 : 150}
-                        options={{
-                          fillColor: r.severity === 3 ? "#f43f5e" : r.severity === 2 ? "#fbbf24" : "#10b981",
-                          fillOpacity: 0.1,
-                          strokeColor: r.severity === 3 ? "#f43f5e" : r.severity === 2 ? "#fbbf24" : "#10b981",
-                          strokeWeight: 1,
-                        }}
-                      />
-                    ))}
+                      {/* Incident Hotspot Circles */}
+                      {reports.map((r, idx) => (
+                        <Circle
+                          key={idx}
+                          center={{ lat: parseFloat(r.latitude) || 13.08, lng: parseFloat(r.longitude) || 80.27 }}
+                          radius={r.severity === 3 ? 400 : r.severity === 2 ? 250 : 150}
+                          options={{
+                            fillColor: r.severity === 3 ? "#f43f5e" : r.severity === 2 ? "#fbbf24" : "#10b981",
+                            fillOpacity: 0.1,
+                            strokeColor: r.severity === 3 ? "#f43f5e" : r.severity === 2 ? "#fbbf24" : "#10b981",
+                            strokeWeight: 1,
+                          }}
+                        />
+                      ))}
 
-                    {selectedEmergency && (
-                      <InfoWindow
-                        position={{ lat: selectedEmergency.latitude, lng: selectedEmergency.longitude }}
-                        onCloseClick={() => setSelectedEmergency(null)}
-                      >
-                        <div className="text-black p-1">
-                          <strong className="text-rose-600">SOS ACTIVE</strong>
-                          <p className="text-xs">{selectedEmergency.user_email}</p>
-                          <p className="text-[10px]">{selectedEmergency.latitude.toFixed(4)}, {selectedEmergency.longitude.toFixed(4)}</p>
-                        </div>
-                      </InfoWindow>
+                      {selectedEmergency && (
+                        <InfoWindow
+                          position={{ lat: selectedEmergency.latitude, lng: selectedEmergency.longitude }}
+                          onCloseClick={() => setSelectedEmergency(null)}
+                        >
+                          <div className="text-black p-1">
+                            <strong className="text-rose-600">SOS ACTIVE</strong>
+                            <p className="text-xs">{selectedEmergency.user_email}</p>
+                            <p className="text-[10px]">{selectedEmergency.latitude.toFixed(4)}, {selectedEmergency.longitude.toFixed(4)}</p>
+                          </div>
+                        </InfoWindow>
+                      )}
+                    </GoogleMap>
+                  ) : (
+                    <div className="h-[550px] grid place-items-center text-slate-500">Loading Map components…</div>
+                  )}
+                </div>
+
+                {/* Sidebar list of active SOS */}
+                <div className="lg:col-span-1 flex flex-col gap-4">
+                  <div className="panel p-5 space-y-4 flex-1 overflow-y-auto max-h-[550px]">
+                    <h3 className="text-md font-bold text-slate-200 border-b border-white/5 pb-2">Active SOS Signals</h3>
+                    {emergencies.length === 0 ? (
+                      <p className="text-xs text-slate-500">No active SOS signals currently transmitting.</p>
+                    ) : (
+                      <div className="space-y-3">
+                        {emergencies.map((item) => (
+                          <div
+                            key={item.id}
+                            className={`p-3 rounded-lg border text-xs cursor-pointer transition-colors ${
+                              trackingSOS?.id === item.id
+                                ? "bg-rose-950/20 border-rose-500/50"
+                                : "bg-white/5 border-white/5 hover:border-white/10"
+                            }`}
+                            onClick={() => {
+                              setTrackingSOS(item)
+                              setSimulatedOffset({ lat: 0, lng: 0 })
+                            }}
+                          >
+                            <div className="flex justify-between items-center mb-1">
+                              <span className="font-semibold text-rose-300 truncate max-w-[120px]">{item.user_email}</span>
+                              <span className="live-dot" />
+                            </div>
+                            <p className="text-slate-400">Lat: {item.latitude.toFixed(4)}</p>
+                            <p className="text-slate-400">Lng: {item.longitude.toFixed(4)}</p>
+                            <div className="mt-2 flex gap-1 justify-end">
+                              <button
+                                className="btn btn-ghost text-[9px] py-0.5 px-2"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleResolve(item.id, item.user_email)
+                                  if (trackingSOS?.id === item.id) {
+                                    setTrackingSOS(null)
+                                  }
+                                }}
+                              >
+                                Resolve
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     )}
-                  </GoogleMap>
-                ) : (
-                  <div className="h-[550px] grid place-items-center text-slate-500">Loading Map components…</div>
-                )}
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -1441,7 +1589,7 @@ export default function App() {
                           <td className="p-4 text-slate-300 font-bold">{zone.incidents}</td>
                           <td className="p-4 text-center">
                             <button
-                              className="btn btn-danger text-xs py-1.5 px-3"
+                              className="btn btn-danger text-xs py-1 px-3"
                               onClick={() => handleDeleteZone(zone.id, zone.name)}
                             >
                               Remove
@@ -1822,6 +1970,33 @@ export default function App() {
             </div>
           )}
         </main>
+      </div>
+
+      {/* Floating Toast Notifications */}
+      <div className="fixed top-6 right-6 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none">
+        {toasts.map(toast => (
+          <div
+            key={toast.id}
+            className={`p-4 rounded-xl border pointer-events-auto shadow-2xl flex items-center justify-between gap-3 animate-slide-in ${
+              toast.type === "danger"
+                ? "bg-rose-500/20 border-rose-500/40 text-rose-200"
+                : "bg-cyan-500/20 border-cyan-500/40 text-cyan-200"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <span className={toast.type === "danger" ? "text-rose-400 animate-pulse" : "text-cyan-400"}>
+                <Siren width={20} height={20} />
+              </span>
+              <p className="text-sm font-semibold">{toast.message}</p>
+            </div>
+            <button
+              onClick={() => setToasts(prev => prev.filter(t => t.id !== toast.id))}
+              className="text-slate-400 hover:text-slate-200 text-xs"
+            >
+              ✕
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   )
